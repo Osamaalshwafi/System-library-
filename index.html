@@ -346,15 +346,6 @@
             to { opacity:0; transform:translateY(-20px) scale(0.8); }
         }
 
-        /* Progress Bar */
-        .progress-container {
-            margin-top:8px; background:var(--surface-alt); border-radius:50px; height:10px; overflow:hidden;
-        }
-        .progress-bar {
-            height:100%; width:0%; background:var(--primary); border-radius:50px; transition: width 0.2s;
-        }
-        .progress-text { font-size:0.8rem; color:var(--text-muted); margin-top:4px; }
-
         .footer { text-align:center; padding:30px 20px; color:var(--text-muted); font-size:0.85rem; position:relative; z-index:1; }
         .footer a { color:var(--primary); text-decoration:none; font-weight:600; }
 
@@ -601,29 +592,22 @@
                     ${app.requirements?`<div class="modal-meta-item"><strong>المتطلبات</strong><span>${app.requirements}</span></div>`:''}
                     <div class="modal-meta-item"><strong>التحميلات</strong><span>⬇️ ${(app.downloads||0).toLocaleString('ar-EG')}</span></div>
                 </div>
-                <a href="${app.downloadUrl}" class="btn-download" onclick="handleDownloadClick(event, '${app.id}', '${app.downloadUrl}')">
-                    <span class="download-icon">⬇️</span> تحميل الآن
-                </a>
+                ${app.downloadUrl ? `
+                    <a href="${app.downloadUrl}" target="_blank" class="btn-download" onclick="handleDownload('${app.id}')" rel="noopener">
+                        <span class="download-icon">⬇️</span> تحميل الآن
+                    </a>` : '<p style="text-align:center;">⚠️ رابط التحميل غير متوفر</p>'}
             `;
             appModalOverlay.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
         function closeModal() { appModalOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
-
-        async function handleDownloadClick(e, appId, url) {
-            e.preventDefault();
+        async function handleDownload(appId) {
             await incrementDownload(appId);
             const app = allApps.find(a=>a.id===appId);
             if(app) app.downloads = (app.downloads||0)+1;
             statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0).toLocaleString('ar-EG');
             showToast('✅ جاري التحميل...','success');
             setTimeout(()=>{ closeModal(); renderApps(); }, 800);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         }
 
         // Search
@@ -710,96 +694,15 @@
                 </div>
                 <div class="form-group"><label>المتطلبات</label><input id="appRequirements" value="${app?.requirements||''}" placeholder="Android 8.0+"></div>
                 <div class="form-group"><label>رابط الأيقونة</label><input id="appIconUrl" value="${app?.iconUrl||''}" placeholder="https://..."></div>
-                <div class="form-group">
-                    <label>رفع ملف التطبيق (خدمة tmpfiles.org)</label>
-                    <input type="file" id="appFileInput" accept=".apk,.exe,.dmg,.zip,.rar,.ipa,.7z">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="uploadFileWithProgress()" style="margin-top:6px;">📤 رفع مع نسبة التقدم</button>
-                    <input type="hidden" id="appDownloadUrl" value="${app?.downloadUrl||''}">
-                    <div id="uploadStatus" style="margin-top:8px;">
-                        ${app?.downloadUrl ? `✅ الرابط الحالي: ${app.downloadUrl.substring(0,50)}...` : ''}
-                        <div class="progress-container" id="progressContainer" style="display:none;">
-                            <div class="progress-bar" id="progressBar"></div>
-                        </div>
-                        <div class="progress-text" id="progressText"></div>
-                    </div>
+                <div class="form-group"><label>رابط التحميل (Google Drive مباشر) *</label>
+                    <input type="url" id="appDownloadUrl" value="${app?.downloadUrl||''}" placeholder="https://drive.google.com/uc?export=download&id=XXXXX">
+                    <small style="color:var(--text-muted);">استخدم رابط التحميل المباشر من Google Drive.</small>
                 </div>
                 <div class="form-group"><label>وسوم (بفواصل)</label><input id="appTags" value="${(app?.tags||[]).join(',')}" placeholder="تواصل,شات"></div>
                 <div class="form-group"><label><input type="checkbox" id="appFeatured" ${app?.featured?'checked':''}> مميز</label></div>
                 <button class="btn btn-primary" onclick="saveApp()">💾 ${isEdit?'تحديث':'حفظ'}</button>
                 <button class="btn btn-ghost" onclick="document.getElementById('adminFormContainer').innerHTML='';editingAppId=null;">إلغاء</button>
             `;
-        }
-
-        // دالة الرفع مع شريط التقدم
-        function uploadFileWithProgress() {
-            const fileInput = document.getElementById('appFileInput');
-            const statusDiv = document.getElementById('uploadStatus');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            const downloadUrlInput = document.getElementById('appDownloadUrl');
-
-            if (!fileInput.files.length) {
-                showToast('⚠️ اختر ملفاً أولاً', 'error');
-                return;
-            }
-            const file = fileInput.files[0];
-
-            // إظهار شريط التقدم
-            progressContainer.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressText.textContent = '0%';
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://tmpfiles.org/api/v1/upload', true);
-
-            // تتبع التقدم
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    progressBar.style.width = percent + '%';
-                    progressText.textContent = percent + '%';
-                }
-            });
-
-            xhr.addEventListener('load', () => {
-                if (xhr.status === 200) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.status === 'success' && response.data && response.data.url) {
-                            const cleanUrl = response.data.url;
-                            downloadUrlInput.value = cleanUrl;
-                            statusDiv.innerHTML = `✅ تم الرفع: <a href="${cleanUrl}" target="_blank">${cleanUrl}</a>`;
-                            showToast('✅ تم رفع الملف بنجاح', 'success');
-                        } else {
-                            throw new Error('استجابة غير متوقعة');
-                        }
-                    } catch (e) {
-                        statusDiv.innerHTML = '❌ فشل في معالجة استجابة الخادم';
-                        showToast('❌ فشل الرفع', 'error');
-                    }
-                } else {
-                    statusDiv.innerHTML = '❌ فشل الرفع. تحقق من الاتصال أو حجم الملف';
-                    showToast('❌ فشل الرفع', 'error');
-                }
-                // إخفاء شريط التقدم بعد انتهاء
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                    progressText.textContent = '';
-                }, 1500);
-            });
-
-            xhr.addEventListener('error', () => {
-                statusDiv.innerHTML = '❌ فشل الرفع بسبب خطأ في الشبكة';
-                showToast('❌ فشل الرفع', 'error');
-                progressContainer.style.display = 'none';
-                progressText.textContent = '';
-            });
-
-            xhr.send(formData);
         }
 
         async function saveApp() {
