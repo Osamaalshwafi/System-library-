@@ -592,22 +592,32 @@
                     ${app.requirements?`<div class="modal-meta-item"><strong>المتطلبات</strong><span>${app.requirements}</span></div>`:''}
                     <div class="modal-meta-item"><strong>التحميلات</strong><span>⬇️ ${(app.downloads||0).toLocaleString('ar-EG')}</span></div>
                 </div>
-                ${app.downloadUrl ? `
-                    <a href="${app.downloadUrl}" target="_blank" class="btn-download" onclick="handleDownload('${app.id}')" rel="noopener">
-                        <span class="download-icon">⬇️</span> تحميل الآن
-                    </a>` : '<p style="text-align:center;">⚠️ رابط التحميل غير متوفر</p>'}
+                <a href="${app.downloadUrl}" class="btn-download" onclick="handleDownloadClick(event, '${app.id}', '${app.downloadUrl}')">
+                    <span class="download-icon">⬇️</span> تحميل الآن
+                </a>
             `;
             appModalOverlay.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
         function closeModal() { appModalOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
-        async function handleDownload(appId) {
+
+        // دالة التحميل المباشر (إلى التخزين المحلي)
+        async function handleDownloadClick(e, appId, url) {
+            e.preventDefault();
+            // تحديث العداد
             await incrementDownload(appId);
             const app = allApps.find(a=>a.id===appId);
             if(app) app.downloads = (app.downloads||0)+1;
             statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0).toLocaleString('ar-EG');
-            showToast('✅ جاري التحميل...','success');
+            showToast('✅ جاري التحميل...', 'success');
             setTimeout(()=>{ closeModal(); renderApps(); }, 800);
+            // بدء التحميل إلى الجهاز
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = ''; // يجبر التحميل
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         // Search
@@ -694,9 +704,10 @@
                 </div>
                 <div class="form-group"><label>المتطلبات</label><input id="appRequirements" value="${app?.requirements||''}" placeholder="Android 8.0+"></div>
                 <div class="form-group"><label>رابط الأيقونة</label><input id="appIconUrl" value="${app?.iconUrl||''}" placeholder="https://..."></div>
-                <div class="form-group"><label>رابط التحميل (Google Drive مباشر) *</label>
+                <div class="form-group">
+                    <label>رابط التحميل (Google Drive مباشر) *</label>
                     <input type="url" id="appDownloadUrl" value="${app?.downloadUrl||''}" placeholder="https://drive.google.com/uc?export=download&id=XXXXX">
-                    <small style="color:var(--text-muted);">استخدم رابط التحميل المباشر من Google Drive.</small>
+                    <small style="color:var(--text-muted);">ارفع الملف إلى Google Drive، واجعله "متاح لكل من لديه الرابط"، ثم استخدم الرابط بالصيغة أعلاه.</small>
                 </div>
                 <div class="form-group"><label>وسوم (بفواصل)</label><input id="appTags" value="${(app?.tags||[]).join(',')}" placeholder="تواصل,شات"></div>
                 <div class="form-group"><label><input type="checkbox" id="appFeatured" ${app?.featured?'checked':''}> مميز</label></div>
@@ -737,12 +748,14 @@
             } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
         }
         async function deleteApp(id) {
-            if(!confirm('حذف التطبيق؟')) return;
-            await deleteApp(id);
-            showToast('🗑️ تم الحذف','info');
-            await refreshApps();
-            renderAdminAppList();
-            renderApps();
+            if(!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
+            try {
+                await deleteApp(id);
+                showToast('🗑️ تم الحذف بنجاح','info');
+                await refreshApps();
+                renderAdminAppList();
+                renderApps();
+            } catch(e) { showToast('❌ فشل الحذف','error'); }
         }
 
         async function refreshApps() {
