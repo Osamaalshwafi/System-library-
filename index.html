@@ -462,8 +462,8 @@
                 showToast('⚠️ اضبط Cloudinary cloud name أولاً', 'error'); return;
             }
             cloudinary.openUploadWidget({
-                cloudName: dw5psz5y2,
-                uploadPreset: unsigned_apps,
+                cloudName: CLOUDINARY_CLOUD_NAME,
+                uploadPreset: CLOUDINARY_UPLOAD_PRESET,
                 sources: ['local', 'url'],
                 resourceType: 'auto',
                 clientAllowedFormats: ['apk','exe','dmg','zip','rar','ipa','7z','tar.gz'],
