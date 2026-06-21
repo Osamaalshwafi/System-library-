@@ -31,8 +31,6 @@
     <!-- Firebase (Firestore فقط) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <!-- Cloudinary Upload Widget -->
-    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 
     <style>
         :root {
@@ -69,15 +67,16 @@
 
         * { margin:0; padding:0; box-sizing:border-box; }
         html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
-        body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+        body {
+            font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6;
+            min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+        }
 
-        /* سكرول بار */
         ::-webkit-scrollbar { width:6px; }
         ::-webkit-scrollbar-track { background:transparent; }
         ::-webkit-scrollbar-thumb { background:#d1d5e0; border-radius:20px; }
         ::-webkit-scrollbar-thumb:hover { background:#b0b7c9; }
 
-        /* جسيمات الخلفية */
         .particles-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
         .particle { position:absolute; border-radius:50%; animation:floatUp linear infinite; opacity:0; }
         @keyframes floatUp {
@@ -87,15 +86,17 @@
             100% { transform:translateY(-10vh) scale(1.2); opacity:0; }
         }
 
-        /* الهيدر */
         .header {
-            position:sticky; top:0; z-index:100;
-            background:rgba(255,255,255,0.78); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+            position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.78);
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
             border-bottom:1px solid var(--border); transition:var(--transition); padding:0 20px;
         }
         .header.scrolled { box-shadow:var(--shadow); background:rgba(255,255,255,0.92); }
         .nav { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; gap:16px; }
-        .logo { display:flex; align-items:center; gap:10px; font-size:1.35rem; font-weight:800; color:var(--primary); text-decoration:none; letter-spacing:-0.5px; white-space:nowrap; transition:var(--transition-fast); }
+        .logo {
+            display:flex; align-items:center; gap:10px; font-size:1.35rem; font-weight:800; color:var(--primary);
+            text-decoration:none; letter-spacing:-0.5px; white-space:nowrap; transition:var(--transition-fast);
+        }
         .logo:hover { transform:scale(1.03); }
         .logo-icon {
             width:42px; height:42px; background:linear-gradient(135deg,var(--primary),var(--primary-light));
@@ -108,26 +109,26 @@
         }
         .nav-actions { display:flex; align-items:center; gap:10px; }
         .btn {
-            padding:10px 20px; border-radius:50px; font-weight:600; font-size:0.9rem; cursor:pointer;
-            border:none; transition:var(--transition-fast); text-decoration:none; display:inline-flex;
-            align-items:center; gap:7px; font-family:var(--font); white-space:nowrap; letter-spacing:0.2px;
+            padding:10px 20px; border-radius:50px; font-weight:600; font-size:0.9rem; cursor:pointer; border:none;
+            transition:var(--transition-fast); text-decoration:none; display:inline-flex; align-items:center;
+            gap:7px; font-family:var(--font); white-space:nowrap; letter-spacing:0.2px;
         }
-        .btn-primary { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; box-shadow:0 4px 14px var(--primary-glow); }
+        .btn-primary {
+            background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff;
+            box-shadow:0 4px 14px var(--primary-glow);
+        }
         .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(91,76,240,0.35); }
         .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
         .btn-outline:hover { background:var(--primary); color:#fff; transform:translateY(-2px); }
         .btn-ghost { background:transparent; color:var(--text-secondary); padding:8px 14px; }
         .btn-ghost:hover { background:var(--surface-alt); color:var(--text); }
         .btn-sm { padding:7px 14px; font-size:0.8rem; border-radius:40px; }
-        .btn-icon { width:40px; height:40px; padding:0; border-radius:50%; justify-content:center; font-size:1.2rem; }
         .btn-danger { background:var(--red); color:#fff; }
         .btn-danger:hover { background:#dc2626; }
         .btn-xs { padding:6px 12px; font-size:0.75rem; border-radius:30px; }
 
-        /* المحتوى الرئيسي */
         .main-content { position:relative; z-index:1; max-width:1300px; margin:0 auto; padding:20px 20px 60px; }
 
-        /* الهيرو */
         .hero { text-align:center; padding:50px 20px 40px; animation:fadeInUp 0.7s ease-out; }
         @keyframes fadeInUp {
             from { opacity:0; transform:translateY(30px); }
@@ -155,11 +156,11 @@
         .hero-stat-value { font-size:2rem; font-weight:900; color:var(--primary); }
         .hero-stat-label { font-size:0.85rem; color:var(--text-muted); }
 
-        /* البحث والتصفية */
         .search-filter-section { margin:20px 0 30px; animation:fadeInUp 0.6s ease-out 0.2s backwards; }
         .search-wrapper {
-            display:flex; align-items:center; background:var(--surface); border-radius:60px; padding:6px 6px 6px 22px;
-            box-shadow:var(--shadow); border:2px solid transparent; transition:var(--transition); max-width:650px; margin:0 auto 20px;
+            display:flex; align-items:center; background:var(--surface); border-radius:60px;
+            padding:6px 6px 6px 22px; box-shadow:var(--shadow); border:2px solid transparent;
+            transition:var(--transition); max-width:650px; margin:0 auto 20px;
         }
         .search-wrapper:focus-within {
             border-color:var(--primary); box-shadow:var(--shadow-lg), 0 0 0 8px var(--primary-glow);
@@ -171,7 +172,8 @@
         .search-wrapper input::placeholder { color:var(--text-muted); }
         .search-btn {
             background:var(--primary); color:#fff; border:none; border-radius:50px; padding:12px 24px;
-            cursor:pointer; font-weight:700; font-size:0.9rem; transition:var(--transition-fast); font-family:var(--font); white-space:nowrap;
+            cursor:pointer; font-weight:700; font-size:0.9rem; transition:var(--transition-fast);
+            font-family:var(--font); white-space:nowrap;
         }
         .search-btn:hover { background:var(--primary-dark); transform:scale(1.03); }
         .category-tabs { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:0; }
@@ -186,7 +188,6 @@
         }
         .results-info { text-align:center; margin:10px 0; color:var(--text-muted); font-size:0.9rem; }
 
-        /* شبكة التطبيقات */
         .apps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:20px; }
         .app-card {
             background:var(--surface); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-sm);
@@ -203,12 +204,13 @@
         .app-card:hover::after { opacity:1; }
         .app-card-header { display:flex; align-items:center; gap:14px; }
         .app-icon {
-            width:56px; height:56px; border-radius:var(--radius-sm); object-fit:cover; background:var(--surface-alt);
-            flex-shrink:0; box-shadow:var(--shadow-sm); transition:var(--transition);
+            width:56px; height:56px; border-radius:var(--radius-sm); object-fit:cover;
+            background:var(--surface-alt); flex-shrink:0; box-shadow:var(--shadow-sm); transition:var(--transition);
         }
         .app-card:hover .app-icon { transform:scale(1.06); box-shadow:var(--shadow); }
         .app-icon-placeholder {
-            width:56px; height:56px; border-radius:var(--radius-sm); background:linear-gradient(135deg,var(--primary),var(--primary-light));
+            width:56px; height:56px; border-radius:var(--radius-sm);
+            background:linear-gradient(135deg,var(--primary),var(--primary-light));
             display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; flex-shrink:0;
         }
         .app-card-info { flex:1; min-width:0; }
@@ -224,11 +226,10 @@
         .app-card-meta { display:flex; gap:14px; font-size:0.78rem; color:var(--text-muted); align-items:center; flex-wrap:wrap; }
         .app-card-meta span { display:flex; align-items:center; gap:4px; }
         .app-card-badge {
-            position:absolute; top:14px; left:14px; background:var(--accent); color:#fff; padding:5px 12px;
-            border-radius:50px; font-size:0.72rem; font-weight:700; z-index:2;
+            position:absolute; top:14px; left:14px; background:var(--accent); color:#fff;
+            padding:5px 12px; border-radius:50px; font-size:0.72rem; font-weight:700; z-index:2;
         }
 
-        /* حالة فارغة وسكيليتون */
         .empty-state { text-align:center; padding:50px 20px; color:var(--text-muted); grid-column:1/-1; }
         .empty-state-icon { font-size:4rem; margin-bottom:16px; opacity:0.6; }
         .empty-state h3 { font-size:1.3rem; color:var(--text); margin-bottom:8px; }
@@ -242,11 +243,10 @@
         }
         .skeleton-card { height:200px; border-radius:var(--radius-lg); }
 
-        /* النافذة المنبثقة */
         .modal-overlay {
-            position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px);
-            -webkit-backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:20px;
-            animation:fadeIn 0.25s ease-out;
+            position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.55);
+            backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+            display:flex; align-items:center; justify-content:center; padding:20px; animation:fadeIn 0.25s ease-out;
         }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
         .modal {
@@ -296,10 +296,10 @@
             70% { transform:translateY(3px); }
         }
 
-        /* لوحة التحكم */
         .admin-overlay {
-            position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
-            -webkit-backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:20px;
+            position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.6);
+            backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+            display:flex; align-items:center; justify-content:center; padding:20px;
         }
         .admin-panel {
             background:var(--surface); border-radius:var(--radius-xl); max-width:700px; width:100%; max-height:90vh;
@@ -310,8 +310,8 @@
         .form-group label { display:block; font-weight:700; margin-bottom:5px; font-size:0.9rem; color:var(--text); }
         .form-group input, .form-group textarea, .form-group select {
             width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:var(--radius-sm);
-            font-family:var(--font); font-size:0.95rem; transition:var(--transition-fast); background:var(--surface-alt);
-            color:var(--text); resize:vertical;
+            font-family:var(--font); font-size:0.95rem; transition:var(--transition-fast);
+            background:var(--surface-alt); color:var(--text); resize:vertical;
         }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline:none; border-color:var(--primary); box-shadow:0 0 0 6px var(--primary-glow); background:#fff;
@@ -325,7 +325,6 @@
         .admin-app-list-item span { font-weight:600; flex:1; min-width:120px; }
         .admin-app-list-item .actions { display:flex; gap:6px; }
 
-        /* التوست */
         .toast-container {
             position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:999;
             display:flex; flex-direction:column; gap:8px; pointer-events:none;
@@ -347,14 +346,20 @@
             to { opacity:0; transform:translateY(-20px) scale(0.8); }
         }
 
-        /* الفوتر */
+        /* Progress Bar */
+        .progress-container {
+            margin-top:8px; background:var(--surface-alt); border-radius:50px; height:10px; overflow:hidden;
+        }
+        .progress-bar {
+            height:100%; width:0%; background:var(--primary); border-radius:50px; transition: width 0.2s;
+        }
+        .progress-text { font-size:0.8rem; color:var(--text-muted); margin-top:4px; }
+
         .footer { text-align:center; padding:30px 20px; color:var(--text-muted); font-size:0.85rem; position:relative; z-index:1; }
         .footer a { color:var(--primary); text-decoration:none; font-weight:600; }
 
-        /* كلاس الإخفاء */
         .hidden { display:none !important; }
 
-        /* تجاوب الشاشات */
         @media (max-width:768px) {
             .apps-grid { grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; }
             .hero h1 { font-size:1.8rem; }
@@ -381,10 +386,8 @@
 </head>
 <body>
 
-    <!-- جسيمات متحركة -->
     <div class="particles-container" id="particlesContainer" aria-hidden="true"></div>
 
-    <!-- رأس الصفحة -->
     <header class="header" id="header">
         <nav class="nav">
             <a href="#" class="logo" title="مكتبتك الرقمية - الرئيسية">
@@ -399,9 +402,7 @@
         </nav>
     </header>
 
-    <!-- المحتوى الرئيسي -->
     <main class="main-content" id="mainContent">
-        <!-- قسم الترحيب والإحصائيات -->
         <section class="hero" aria-labelledby="heroTitle">
             <div class="hero-badge">✨ منصة موثوقة لتحميل التطبيقات</div>
             <h1 id="heroTitle">مكتبتك الرقمية المتكاملة</h1>
@@ -422,7 +423,6 @@
             </div>
         </section>
 
-        <!-- البحث والفئات -->
         <section class="search-filter-section" aria-label="بحث وتصفية">
             <div class="search-wrapper">
                 <input type="text" id="searchInput" placeholder="🔍 ابحث عن تطبيق... (مثال: واتساب، فوتوشوب، لعبة)"
@@ -440,9 +440,7 @@
             <div class="results-info" id="resultsInfo"></div>
         </section>
 
-        <!-- شبكة التطبيقات -->
         <section class="apps-grid" id="appsGrid" aria-label="قائمة التطبيقات">
-            <!-- عناصر تحميل وهمية -->
             <div class="skeleton skeleton-card"></div>
             <div class="skeleton skeleton-card"></div>
             <div class="skeleton skeleton-card"></div>
@@ -452,12 +450,10 @@
         </section>
     </main>
 
-    <!-- الفوتر -->
     <footer class="footer">
         <p>© 2025 <strong>مكتبتك الرقمية</strong> · جميع الحقوق محفوظة · صُنع بحب ❤️</p>
     </footer>
 
-    <!-- نافذة تفاصيل التطبيق -->
     <div class="modal-overlay hidden" id="appModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal" id="appModal">
             <button class="modal-close" onclick="closeModal()" aria-label="إغلاق">✕</button>
@@ -465,19 +461,18 @@
         </div>
     </div>
 
-    <!-- نافذة لوحة التحكم -->
     <div class="admin-overlay hidden" id="adminOverlay" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
         <div class="admin-panel" id="adminPanel">
-            <button class="modal-close" onclick="closeAdminPanel()" aria-label="إغلاق" style="float:left;position:sticky;top:0;">✕</button>
+            <button class="modal-close" onclick="closeAdminPanel()" aria-label="إغلاق"
+                    style="float:left;position:sticky;top:0;">✕</button>
             <div id="adminContent"></div>
         </div>
     </div>
 
-    <!-- حاوية الإشعارات -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ==================== CONFIGURATION ====================
+        // ==================== FIREBASE CONFIGURATION ====================
         const firebaseConfig = {
             apiKey: "AIzaSyDvDaK7HtwtQ_VmR9cKoDq6sdrUyL_Hfls",
             authDomain: "system-library-52cc1.firebaseapp.com",
@@ -487,603 +482,381 @@
             appId: "1:139702257477:web:1615f6c263afb3e1d1e02c"
         };
 
-        // Cloudinary configuration – تم تعبئتها بالبيانات التي أرسلتها
-        const CLOUDINARY_CLOUD_NAME = "dw5psz5y2";
-        const CLOUDINARY_UPLOAD_PRESET = "unsigned_apps";
-
-        // Initialize Firebase
         let db;
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            console.log('✅ Firebase initialized');
         } catch (e) {
-            console.error('Firebase error:', e);
+            console.error(e);
             db = null;
         }
 
-        // ==================== GLOBAL STATE ====================
         const ADMIN_PASSWORD = 'admin2025digital';
-        let allApps = [];
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let isAdminLoggedIn = false;
-        let editingAppId = null;
+        let allApps = [], currentCategory = 'all', searchQuery = '', isAdminLoggedIn = false, editingAppId = null;
 
-        // DOM references
-        const appsGrid = document.getElementById('appsGrid');
-        const searchInput = document.getElementById('searchInput');
-        const categoryTabs = document.getElementById('categoryTabs');
-        const resultsInfo = document.getElementById('resultsInfo');
-        const appModalOverlay = document.getElementById('appModalOverlay');
-        const modalBody = document.getElementById('modalBody');
-        const adminOverlay = document.getElementById('adminOverlay');
-        const adminContent = document.getElementById('adminContent');
-        const toastContainer = document.getElementById('toastContainer');
-        const statAppsCount = document.getElementById('statAppsCount');
-        const statDownloads = document.getElementById('statDownloads');
-        const particlesContainer = document.getElementById('particlesContainer');
-        const header = document.getElementById('header');
+        // DOM
+        const $ = id => document.getElementById(id);
+        const appsGrid = $('appsGrid'), searchInput = $('searchInput'), categoryTabs = $('categoryTabs'),
+              resultsInfo = $('resultsInfo'), appModalOverlay = $('appModalOverlay'), modalBody = $('modalBody'),
+              adminOverlay = $('adminOverlay'), adminContent = $('adminContent'), toastContainer = $('toastContainer'),
+              statAppsCount = $('statAppsCount'), statDownloads = $('statDownloads'),
+              particlesContainer = $('particlesContainer'), header = $('header');
 
-        // ==================== PARTICLES ====================
+        // Particles
         function createParticles() {
-            const colors = ['#5b4cf0', '#7c6ff7', '#f7931e', '#10b981', '#06b6d4', '#8b5cf6'];
-            for (let i = 0; i < 35; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const size = Math.random() * 8 + 3;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.animationDuration = Math.random() * 14 + 8 + 's';
-                particle.style.animationDelay = Math.random() * 12 + 's';
-                particlesContainer.appendChild(particle);
+            const colors = ['#5b4cf0','#7c6ff7','#f7931e','#10b981','#06b6d4','#8b5cf6'];
+            for (let i=0; i<35; i++) {
+                const p = document.createElement('div'); p.className = 'particle';
+                const size = Math.random()*8+3;
+                p.style.width = size+'px'; p.style.height = size+'px';
+                p.style.left = Math.random()*100+'%';
+                p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                p.style.animationDuration = Math.random()*14+8+'s';
+                p.style.animationDelay = Math.random()*12+'s';
+                particlesContainer.appendChild(p);
             }
         }
 
-        // ==================== TOAST ====================
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'toastOut 0.4s ease-in forwards';
-                toast.addEventListener('animationend', () => toast.remove());
-            }, 3000);
+        function showToast(msg, type='info') {
+            const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = msg;
+            toastContainer.appendChild(t);
+            setTimeout(()=>{ t.style.animation = 'toastOut 0.4s ease-in forwards'; t.addEventListener('animationend',()=>t.remove()); },3000);
         }
 
-        // ==================== FIREBASE OPERATIONS ====================
+        // Firestore
         async function fetchApps() {
             if (!db) return [];
             try {
-                const snapshot = await db.collection('apps').orderBy('createdAt', 'desc').get();
-                const apps = [];
-                snapshot.forEach(doc => apps.push({ id: doc.id, ...doc.data() }));
-                return apps;
-            } catch (error) {
-                console.error('Error fetching apps:', error);
-                showToast('⚠️ خطأ في جلب التطبيقات من قاعدة البيانات', 'error');
-                return [];
-            }
+                const snap = await db.collection('apps').orderBy('createdAt','desc').get();
+                const apps = []; snap.forEach(d => apps.push({id:d.id,...d.data()})); return apps;
+            } catch(e) { showToast('⚠️ خطأ في الاتصال بقاعدة البيانات','error'); return []; }
         }
-
-        async function addAppToFirestore(appData) {
-            if (!db) throw new Error('Firebase not initialized');
-            const docRef = await db.collection('apps').add({
-                ...appData,
-                downloads: 0,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-            return docRef.id;
-        }
-
-        async function updateAppInFirestore(appId, appData) {
-            if (!db) throw new Error('Firebase not initialized');
-            await db.collection('apps').doc(appId).update(appData);
-        }
-
-        async function deleteAppFromFirestore(appId) {
-            if (!db) throw new Error('Firebase not initialized');
-            await db.collection('apps').doc(appId).delete();
-        }
-
-        async function incrementDownloadCount(appId) {
+        async function addApp(data) {
             if (!db) return;
-            try {
-                await db.collection('apps').doc(appId).update({
-                    downloads: firebase.firestore.FieldValue.increment(1),
-                });
-            } catch (error) {
-                console.error('Error incrementing download count:', error);
-            }
+            await db.collection('apps').add({...data, downloads:0, createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        }
+        async function updateApp(id, data) { await db.collection('apps').doc(id).update(data); }
+        async function deleteApp(id) { await db.collection('apps').doc(id).delete(); }
+        async function incrementDownload(id) {
+            if (!db) return;
+            await db.collection('apps').doc(id).update({downloads:firebase.firestore.FieldValue.increment(1)});
         }
 
-        // ==================== RENDER APPS ====================
+        // Filter & Render
         function getFilteredApps() {
             let filtered = [...allApps];
-            if (currentCategory !== 'all') {
-                filtered = filtered.filter(app => app.category === currentCategory);
-            }
+            if (currentCategory !== 'all') filtered = filtered.filter(a => a.category === currentCategory);
             if (searchQuery.trim()) {
                 const q = searchQuery.trim().toLowerCase();
-                filtered = filtered.filter(app => {
-                    const searchStr = [
-                        app.name || '', app.nameEn || '', app.shortDesc || '', app.fullDesc || '',
-                        app.developer || '', ...(app.tags || []),
-                    ].join(' ').toLowerCase();
-                    return searchStr.includes(q);
-                });
+                filtered = filtered.filter(a => [a.name,a.nameEn,a.shortDesc,a.fullDesc,a.developer,...(a.tags||[])].join(' ').toLowerCase().includes(q));
             }
             return filtered;
         }
 
         function renderApps() {
             const filtered = getFilteredApps();
-            resultsInfo.textContent = filtered.length > 0 ?
-                `🔍 تم العثور على ${filtered.length} تطبيق` :
-                '😕 لا توجد تطبيقات تطابق بحثك';
-
-            if (filtered.length === 0 && allApps.length === 0 && db) {
+            resultsInfo.textContent = filtered.length ? `🔍 تم العثور على ${filtered.length} تطبيق` : '😕 لا توجد تطبيقات تطابق بحثك';
+            if (!filtered.length && allApps.length && db) {
                 appsGrid.innerHTML = Array(6).fill('<div class="skeleton skeleton-card"></div>').join('');
                 return;
             }
-            if (filtered.length === 0) {
-                appsGrid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <h3>لا توجد تطبيقات حالياً</h3>
-                        <p>لم يتم العثور على تطبيقات تطابق معايير البحث. جرب كلمة بحث مختلفة أو تصفح جميع الفئات.</p>
-                    </div>`;
+            if (!filtered.length) {
+                appsGrid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><h3>لا توجد تطبيقات حالياً</h3><p>جرب كلمة بحث مختلفة أو تصفح جميع الفئات.</p></div>`;
                 return;
             }
-
-            appsGrid.innerHTML = filtered.map((app, index) => {
-                const iconHtml = app.iconUrl ?
-                    `<img src="${app.iconUrl}" alt="${app.name}" class="app-icon" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="app-icon-placeholder" style="display:none;">${(app.name || 'ت')[0]}</div>` :
-                    `<div class="app-icon-placeholder">${(app.name || 'ت')[0]}</div>`;
-
-                const categoryLabels = {
-                    'mobile': '📱 تطبيق هاتف',
-                    'desktop': '💻 تطبيق حاسوب',
-                    'games': '🎮 لعبة',
-                    'tools': '🛠️ أداة',
-                    'education': '📚 تعليم',
-                };
-                const catLabel = categoryLabels[app.category] || app.category || 'تطبيق';
-
-                return `
-                    <article class="app-card" style="animation-delay:${index * 0.06}s" 
-                             onclick="openAppDetail('${app.id}')" 
-                             role="button" tabindex="0" 
-                             aria-label="${app.name} - ${catLabel}"
-                             onkeydown="if(event.key==='Enter')openAppDetail('${app.id}')">
-                        ${app.featured ? '<span class="app-card-badge">⭐ مميز</span>' : ''}
-                        <div class="app-card-header">
-                            ${iconHtml}
-                            <div class="app-card-info">
-                                <h3 class="app-card-name">${app.name || 'تطبيق بدون اسم'}</h3>
-                                <div class="app-card-category">${catLabel}</div>
-                            </div>
-                        </div>
-                        <p class="app-card-desc">${app.shortDesc || 'لا يوجد وصف مختصر'}</p>
-                        <div class="app-card-meta">
-                            ${app.size ? `<span>📦 ${app.size}</span>` : ''}
-                            ${app.version ? `<span>🏷️ ${app.version}</span>` : ''}
-                            <span>⬇️ ${app.downloads || 0}</span>
-                        </div>
-                    </article>`;
+            const catLabels = {mobile:'📱 تطبيق هاتف',desktop:'💻 تطبيق حاسوب',games:'🎮 لعبة',tools:'🛠️ أداة',education:'📚 تعليم'};
+            appsGrid.innerHTML = filtered.map((app,i) => {
+                const iconHtml = app.iconUrl
+                    ? `<img src="${app.iconUrl}" alt="${app.name}" class="app-icon" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="app-icon-placeholder" style="display:none;">${(app.name||'ت')[0]}</div>`
+                    : `<div class="app-icon-placeholder">${(app.name||'ت')[0]}</div>`;
+                const cat = catLabels[app.category] || app.category;
+                return `<article class="app-card" style="animation-delay:${i*0.06}s" onclick="openAppDetail('${app.id}')" role="button" tabindex="0">
+                    ${app.featured?'<span class="app-card-badge">⭐ مميز</span>':''}
+                    <div class="app-card-header">${iconHtml}<div class="app-card-info"><h3 class="app-card-name">${app.name||'تطبيق'}</h3><div class="app-card-category">${cat}</div></div></div>
+                    <p class="app-card-desc">${app.shortDesc||'لا يوجد وصف'}</p>
+                    <div class="app-card-meta">${app.size?`<span>📦 ${app.size}</span>`:''}${app.version?`<span>🏷️ ${app.version}</span>`:''}<span>⬇️ ${app.downloads||0}</span></div>
+                </article>`;
             }).join('');
-
-            // تحديث الإحصائيات
             statAppsCount.textContent = allApps.length;
-            const totalDownloads = allApps.reduce((sum, app) => sum + (app.downloads || 0), 0);
-            statDownloads.textContent = totalDownloads.toLocaleString('ar-EG');
+            statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0).toLocaleString('ar-EG');
         }
 
-        // ==================== MODAL (تفاصيل التطبيق) ====================
-        function openAppDetail(appId) {
-            const app = allApps.find(a => a.id === appId);
-            if (!app) return;
-
-            const categoryLabels = {
-                'mobile': '📱 تطبيق هاتف',
-                'desktop': '💻 تطبيق حاسوب',
-                'games': '🎮 لعبة',
-                'tools': '🛠️ أداة',
-                'education': '📚 تعليم',
-            };
-            const catLabel = categoryLabels[app.category] || app.category || 'تطبيق';
-
-            const iconHtml = app.iconUrl ?
-                `<img src="${app.iconUrl}" alt="${app.name}" class="modal-icon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="modal-icon-placeholder" style="display:none;">${(app.name || 'ت')[0]}</div>` :
-                `<div class="modal-icon-placeholder">${(app.name || 'ت')[0]}</div>`;
-
+        // Modal
+        function openAppDetail(id) {
+            const app = allApps.find(a=>a.id===id); if(!app) return;
+            const catLabels = {mobile:'📱 تطبيق هاتف',desktop:'💻 تطبيق حاسوب',games:'🎮 لعبة',tools:'🛠️ أداة',education:'📚 تعليم'};
+            const cat = catLabels[app.category] || app.category;
+            const iconHtml = app.iconUrl
+                ? `<img src="${app.iconUrl}" class="modal-icon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="modal-icon-placeholder" style="display:none;">${(app.name||'ت')[0]}</div>`
+                : `<div class="modal-icon-placeholder">${(app.name||'ت')[0]}</div>`;
             modalBody.innerHTML = `
                 ${iconHtml}
-                <h2 id="modalTitle">${app.name || 'تطبيق'}</h2>
-                <span class="modal-category">${catLabel}</span>
-                <p class="modal-desc">${app.fullDesc || app.shortDesc || 'لا يوجد وصف مفصل لهذا التطبيق.'}</p>
+                <h2 id="modalTitle">${app.name||'تطبيق'}</h2>
+                <span class="modal-category">${cat}</span>
+                <p class="modal-desc">${app.fullDesc||app.shortDesc||'لا يوجد وصف مفصل.'}</p>
                 <div class="modal-meta-grid">
-                    ${app.version ? `<div class="modal-meta-item"><strong>الإصدار</strong><span>${app.version}</span></div>` : ''}
-                    ${app.size ? `<div class="modal-meta-item"><strong>الحجم</strong><span>${app.size}</span></div>` : ''}
-                    ${app.developer ? `<div class="modal-meta-item"><strong>المطور</strong><span>${app.developer}</span></div>` : ''}
-                    ${app.requirements ? `<div class="modal-meta-item"><strong>المتطلبات</strong><span>${app.requirements}</span></div>` : ''}
-                    <div class="modal-meta-item"><strong>عدد التحميلات</strong><span>⬇️ ${(app.downloads || 0).toLocaleString('ar-EG')}</span></div>
-                    ${app.category ? `<div class="modal-meta-item"><strong>الفئة</strong><span>${catLabel}</span></div>` : ''}
+                    ${app.version?`<div class="modal-meta-item"><strong>الإصدار</strong><span>${app.version}</span></div>`:''}
+                    ${app.size?`<div class="modal-meta-item"><strong>الحجم</strong><span>${app.size}</span></div>`:''}
+                    ${app.developer?`<div class="modal-meta-item"><strong>المطور</strong><span>${app.developer}</span></div>`:''}
+                    ${app.requirements?`<div class="modal-meta-item"><strong>المتطلبات</strong><span>${app.requirements}</span></div>`:''}
+                    <div class="modal-meta-item"><strong>التحميلات</strong><span>⬇️ ${(app.downloads||0).toLocaleString('ar-EG')}</span></div>
                 </div>
-                ${app.downloadUrl ? `
-                    <a href="${app.downloadUrl}" target="_blank" rel="noopener noreferrer" 
-                       class="btn-download" onclick="handleDownload('${app.id}')" 
-                       aria-label="تحميل ${app.name}">
-                        <span class="download-icon">⬇️</span> تحميل الآن
-                    </a>` : 
-                    '<p style="text-align:center;color:var(--text-muted);">⚠️ رابط التحميل غير متوفر حالياً</p>'}
+                <a href="${app.downloadUrl}" class="btn-download" onclick="handleDownloadClick(event, '${app.id}', '${app.downloadUrl}')">
+                    <span class="download-icon">⬇️</span> تحميل الآن
+                </a>
             `;
             appModalOverlay.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+        function closeModal() { appModalOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
 
-        function closeModal() {
-            appModalOverlay.classList.add('hidden');
-            document.body.style.overflow = '';
-            modalBody.innerHTML = '';
+        async function handleDownloadClick(e, appId, url) {
+            e.preventDefault();
+            await incrementDownload(appId);
+            const app = allApps.find(a=>a.id===appId);
+            if(app) app.downloads = (app.downloads||0)+1;
+            statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0).toLocaleString('ar-EG');
+            showToast('✅ جاري التحميل...','success');
+            setTimeout(()=>{ closeModal(); renderApps(); }, 800);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
-        async function handleDownload(appId) {
-            await incrementDownloadCount(appId);
-            const app = allApps.find(a => a.id === appId);
-            if (app) app.downloads = (app.downloads || 0) + 1;
-            const totalDownloads = allApps.reduce((sum, a) => sum + (a.downloads || 0), 0);
-            statDownloads.textContent = totalDownloads.toLocaleString('ar-EG');
-            showToast('✅ جاري التحميل... شكراً لاستخدامك مكتبتك الرقمية!', 'success');
-            setTimeout(() => {
-                closeModal();
-                renderApps();
-            }, 800);
-        }
-
-        // ==================== SEARCH & FILTER ====================
-        function performSearch() {
-            searchQuery = searchInput.value;
-            renderApps();
-        }
-
-        searchInput.addEventListener('input', () => {
-            clearTimeout(searchInput._debounce);
-            searchInput._debounce = setTimeout(() => {
-                searchQuery = searchInput.value;
-                renderApps();
-            }, 350);
+        // Search
+        function performSearch() { searchQuery = searchInput.value; renderApps(); }
+        searchInput.addEventListener('input', ()=>{
+            clearTimeout(searchInput._t);
+            searchInput._t = setTimeout(()=>{ searchQuery=searchInput.value; renderApps(); },350);
         });
-
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                searchQuery = searchInput.value;
-                renderApps();
-            }
-        });
-
-        categoryTabs.addEventListener('click', (e) => {
-            const tab = e.target.closest('.cat-tab');
-            if (!tab) return;
+        categoryTabs.addEventListener('click', e=>{
+            const tab = e.target.closest('.cat-tab'); if(!tab) return;
             currentCategory = tab.dataset.category;
-            categoryTabs.querySelectorAll('.cat-tab').forEach(t => {
-                t.classList.remove('active');
-                t.setAttribute('aria-selected', 'false');
-            });
-            tab.classList.add('active');
-            tab.setAttribute('aria-selected', 'true');
+            categoryTabs.querySelectorAll('.cat-tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+            tab.classList.add('active'); tab.setAttribute('aria-selected','true');
             renderApps();
         });
 
-        // ==================== ADMIN PANEL ====================
+        // Admin
         function openAdminPanel() {
-            if (!isAdminLoggedIn) {
-                showAdminLogin();
-            } else {
-                showAdminDashboard();
-            }
-            adminOverlay.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            if(!isAdminLoggedIn) showLogin(); else showDashboard();
+            adminOverlay.classList.remove('hidden'); document.body.style.overflow = 'hidden';
         }
-
-        function closeAdminPanel() {
-            adminOverlay.classList.add('hidden');
-            document.body.style.overflow = '';
-            editingAppId = null;
-        }
-
-        function showAdminLogin() {
+        function closeAdminPanel() { adminOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
+        function showLogin() {
             adminContent.innerHTML = `
                 <h2 id="adminTitle">🔐 دخول لوحة التحكم</h2>
-                <p style="color:var(--text-secondary);margin-bottom:16px;">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
-                <div class="form-group">
-                    <label for="adminPassword">كلمة المرور</label>
-                    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور..." autocomplete="off">
-                </div>
-                <button class="btn btn-primary" onclick="adminLogin()" style="width:100%;justify-content:center;">
-                    🔓 دخول
-                </button>
-                <p style="text-align:center;margin-top:12px;font-size:0.78rem;color:var(--text-muted);">
-                    كلمة المرور الافتراضية: <code>admin2025digital</code>
-                </p>
+                <p>أدخل كلمة المرور</p>
+                <div class="form-group"><input type="password" id="adminPassword" placeholder="كلمة المرور"></div>
+                <button class="btn btn-primary" onclick="adminLogin()" style="width:100%">دخول</button>
             `;
         }
-
         function adminLogin() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
-                isAdminLoggedIn = true;
-                showToast('✅ تم تسجيل الدخول بنجاح', 'success');
-                showAdminDashboard();
-            } else {
-                showToast('❌ كلمة المرور غير صحيحة', 'error');
-            }
+            if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { isAdminLoggedIn=true; showToast('✅ تم الدخول','success'); showDashboard(); }
+            else showToast('❌ خطأ','error');
         }
-
-        function showAdminDashboard() {
+        function showDashboard() {
             adminContent.innerHTML = `
-                <h2 id="adminTitle">⚙️ لوحة التحكم - إدارة التطبيقات</h2>
+                <h2>⚙️ لوحة التحكم</h2>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
-                    <button class="btn btn-primary btn-sm" onclick="showAddAppForm()">➕ إضافة تطبيق جديد</button>
-                    <button class="btn btn-outline btn-sm" onclick="refreshApps()">🔄 تحديث البيانات</button>
-                    <button class="btn btn-ghost btn-sm" onclick="isAdminLoggedIn=false;showAdminLogin();">🚪 تسجيل الخروج</button>
+                    <button class="btn btn-primary btn-sm" onclick="showAddForm()">➕ إضافة تطبيق</button>
+                    <button class="btn btn-outline btn-sm" onclick="refreshApps()">🔄 تحديث</button>
+                    <button class="btn btn-ghost btn-sm" onclick="isAdminLoggedIn=false;showLogin();">🚪 خروج</button>
                 </div>
-                <div id="adminAppList">
-                    <p style="color:var(--text-muted);">جاري تحميل قائمة التطبيقات...</p>
-                </div>
+                <div id="adminAppList"></div>
                 <div id="adminFormContainer"></div>
             `;
             renderAdminAppList();
         }
-
-        async function renderAdminAppList() {
-            const listContainer = document.getElementById('adminAppList');
-            if (!listContainer) return;
-            if (allApps.length === 0) {
-                listContainer.innerHTML =
-                    '<p style="color:var(--text-muted);text-align:center;">لا توجد تطبيقات حالياً. أضف أول تطبيق!</p>';
-                return;
-            }
-            listContainer.innerHTML = allApps.map(app => `
+        function renderAdminAppList() {
+            const list = document.getElementById('adminAppList'); if(!list) return;
+            if(!allApps.length) { list.innerHTML = '<p style="text-align:center;">لا توجد تطبيقات</p>'; return; }
+            list.innerHTML = allApps.map(a => `
                 <div class="admin-app-list-item">
-                    <span>${app.iconUrl ? `<img src="${app.iconUrl}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-left:6px;" onerror="this.style.display='none';">` : ''} 
-                    <strong>${app.name || 'بدون اسم'}</strong> · ${app.category || 'بدون فئة'} · ⬇️${app.downloads || 0}</span>
+                    <span>${a.iconUrl?`<img src="${a.iconUrl}" style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-left:6px;">`:''}<strong>${a.name}</strong> · ${a.category}</span>
                     <div class="actions">
-                        <button class="btn btn-outline btn-xs" onclick="showEditAppForm('${app.id}')">✏️ تعديل</button>
-                        <button class="btn btn-danger btn-xs" onclick="deleteApp('${app.id}')">🗑️ حذف</button>
+                        <button class="btn btn-outline btn-xs" onclick="editApp('${a.id}')">✏️</button>
+                        <button class="btn btn-danger btn-xs" onclick="deleteApp('${a.id}')">🗑️</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
+        function showAddForm() { editingAppId=null; document.getElementById('adminFormContainer').innerHTML = getFormHTML(); }
+        function editApp(id) { editingAppId=id; const app = allApps.find(a=>a.id===id); document.getElementById('adminFormContainer').innerHTML = getFormHTML(app); }
 
-        function showAddAppForm() {
-            editingAppId = null;
-            const formContainer = document.getElementById('adminFormContainer');
-            if (!formContainer) return;
-            formContainer.innerHTML = getAppFormHTML();
-            formContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function showEditAppForm(appId) {
-            editingAppId = appId;
-            const app = allApps.find(a => a.id === appId);
-            if (!app) return;
-            const formContainer = document.getElementById('adminFormContainer');
-            if (!formContainer) return;
-            formContainer.innerHTML = getAppFormHTML(app);
-            formContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function getAppFormHTML(app = null) {
+        function getFormHTML(app=null) {
             const isEdit = !!app;
             return `
-                <hr style="margin:20px 0;border-color:var(--border);">
-                <h3>${isEdit ? '✏️ تعديل التطبيق' : '➕ إضافة تطبيق جديد'}</h3>
-                <div class="form-group">
-                    <label for="appName">اسم التطبيق (بالعربية) *</label>
-                    <input type="text" id="appName" value="${app?.name || ''}" placeholder="مثال: واتساب بلس" required>
-                </div>
-                <div class="form-group">
-                    <label for="appNameEn">اسم التطبيق (إنجليزي - للبحث)</label>
-                    <input type="text" id="appNameEn" value="${app?.nameEn || ''}" placeholder="مثال: WhatsApp Plus">
-                </div>
+                <hr><h3>${isEdit?'✏️ تعديل التطبيق':'➕ إضافة تطبيق جديد'}</h3>
+                <div class="form-group"><label>اسم التطبيق (بالعربية) *</label><input id="appName" value="${app?.name||''}" placeholder="واتساب بلس"></div>
+                <div class="form-group"><label>اسم إنجليزي</label><input id="appNameEn" value="${app?.nameEn||''}"></div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="appCategory">الفئة *</label>
-                        <select id="appCategory">
-                            <option value="mobile" ${app?.category === 'mobile' ? 'selected' : ''}>📱 تطبيقات الهاتف</option>
-                            <option value="desktop" ${app?.category === 'desktop' ? 'selected' : ''}>💻 تطبيقات الحاسوب</option>
-                            <option value="games" ${app?.category === 'games' ? 'selected' : ''}>🎮 ألعاب</option>
-                            <option value="tools" ${app?.category === 'tools' ? 'selected' : ''}>🛠️ أدوات</option>
-                            <option value="education" ${app?.category === 'education' ? 'selected' : ''}>📚 تعليم</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="appVersion">الإصدار</label>
-                        <input type="text" id="appVersion" value="${app?.version || ''}" placeholder="مثال: 2.5.1">
-                    </div>
+                    <div class="form-group"><label>الفئة</label><select id="appCategory">
+                        <option value="mobile" ${app?.category==='mobile'?'selected':''}>📱 تطبيقات الهاتف</option>
+                        <option value="desktop" ${app?.category==='desktop'?'selected':''}>💻 تطبيقات الحاسوب</option>
+                        <option value="games" ${app?.category==='games'?'selected':''}>🎮 ألعاب</option>
+                        <option value="tools" ${app?.category==='tools'?'selected':''}>🛠️ أدوات</option>
+                        <option value="education" ${app?.category==='education'?'selected':''}>📚 تعليم</option>
+                    </select></div>
+                    <div class="form-group"><label>الإصدار</label><input id="appVersion" value="${app?.version||''}" placeholder="2.5.1"></div>
                 </div>
-                <div class="form-group">
-                    <label for="appShortDesc">وصف مختصر (يظهر في البطاقة) *</label>
-                    <textarea id="appShortDesc" rows="2" placeholder="وصف قصير لا يتجاوز سطرين...">${app?.shortDesc || ''}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="appFullDesc">وصف كامل (يظهر في صفحة التفاصيل)</label>
-                    <textarea id="appFullDesc" rows="4" placeholder="الوصف الكامل للتطبيق مع جميع الميزات...">${app?.fullDesc || ''}</textarea>
-                </div>
+                <div class="form-group"><label>وصف مختصر *</label><textarea id="appShortDesc" rows="2">${app?.shortDesc||''}</textarea></div>
+                <div class="form-group"><label>وصف كامل</label><textarea id="appFullDesc" rows="4">${app?.fullDesc||''}</textarea></div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="appSize">الحجم</label>
-                        <input type="text" id="appSize" value="${app?.size || ''}" placeholder="مثال: 45 MB">
-                    </div>
-                    <div class="form-group">
-                        <label for="appDeveloper">المطور</label>
-                        <input type="text" id="appDeveloper" value="${app?.developer || ''}" placeholder="اسم المطور">
-                    </div>
+                    <div class="form-group"><label>الحجم</label><input id="appSize" value="${app?.size||''}" placeholder="45 MB"></div>
+                    <div class="form-group"><label>المطور</label><input id="appDeveloper" value="${app?.developer||''}"></div>
                 </div>
+                <div class="form-group"><label>المتطلبات</label><input id="appRequirements" value="${app?.requirements||''}" placeholder="Android 8.0+"></div>
+                <div class="form-group"><label>رابط الأيقونة</label><input id="appIconUrl" value="${app?.iconUrl||''}" placeholder="https://..."></div>
                 <div class="form-group">
-                    <label for="appRequirements">المتطلبات</label>
-                    <input type="text" id="appRequirements" value="${app?.requirements || ''}" placeholder="مثال: Android 8.0+, Windows 10+">
-                </div>
-                <div class="form-group">
-                    <label for="appIconUrl">رابط أيقونة التطبيق (URL)</label>
-                    <input type="url" id="appIconUrl" value="${app?.iconUrl || ''}" placeholder="https://example.com/icon.png">
-                </div>
-                <!-- حقل رفع الملف عبر Cloudinary -->
-                <div class="form-group">
-                    <label>ملف التطبيق (APK, EXE, ZIP...)</label>
-                    <button type="button" class="btn btn-outline btn-sm" onclick="openCloudinaryUploader()">
-                        📤 رفع الملف إلى Cloudinary
-                    </button>
-                    <small style="display:block;margin-top:6px;color:var(--text-muted);">
-                        عند رفع الملف سيتم تعبئة حقل رابط التحميل تلقائياً.
-                    </small>
-                    <input type="hidden" id="appDownloadUrl" value="${app?.downloadUrl || ''}">
-                    <div id="uploadStatus" style="margin-top:8px;font-weight:600;color:var(--primary);">
-                        ${app?.downloadUrl ? '✅ رابط موجود مسبقاً: ' + app.downloadUrl.substring(0,45) + '...' : ''}
+                    <label>رفع ملف التطبيق (خدمة tmpfiles.org)</label>
+                    <input type="file" id="appFileInput" accept=".apk,.exe,.dmg,.zip,.rar,.ipa,.7z">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="uploadFileWithProgress()" style="margin-top:6px;">📤 رفع مع نسبة التقدم</button>
+                    <input type="hidden" id="appDownloadUrl" value="${app?.downloadUrl||''}">
+                    <div id="uploadStatus" style="margin-top:8px;">
+                        ${app?.downloadUrl ? `✅ الرابط الحالي: ${app.downloadUrl.substring(0,50)}...` : ''}
+                        <div class="progress-container" id="progressContainer" style="display:none;">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="progress-text" id="progressText"></div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="appTags">وسوم (مفصولة بفواصل - للمساعدة في البحث)</label>
-                    <input type="text" id="appTags" value="${(app?.tags || []).join(', ')}" placeholder="مثال: تواصل, شات, مراسلة">
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="appFeatured" ${app?.featured ? 'checked' : ''}> 
-                        تطبيق مميز (يظهر بشارة خاصة)
-                    </label>
-                </div>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="saveApp()">💾 ${isEdit ? 'تحديث التطبيق' : 'حفظ التطبيق'}</button>
-                    <button class="btn btn-ghost" onclick="document.getElementById('adminFormContainer').innerHTML='';editingAppId=null;">إلغاء</button>
-                </div>
+                <div class="form-group"><label>وسوم (بفواصل)</label><input id="appTags" value="${(app?.tags||[]).join(',')}" placeholder="تواصل,شات"></div>
+                <div class="form-group"><label><input type="checkbox" id="appFeatured" ${app?.featured?'checked':''}> مميز</label></div>
+                <button class="btn btn-primary" onclick="saveApp()">💾 ${isEdit?'تحديث':'حفظ'}</button>
+                <button class="btn btn-ghost" onclick="document.getElementById('adminFormContainer').innerHTML='';editingAppId=null;">إلغاء</button>
             `;
         }
 
-        // ==================== CLOUDINARY UPLOADER ====================
-        function openCloudinaryUploader() {
-            if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "YOUR_CLOUD_NAME") {
-                showToast('⚠️ لم يتم تعيين اسم Cloudinary', 'error');
+        // دالة الرفع مع شريط التقدم
+        function uploadFileWithProgress() {
+            const fileInput = document.getElementById('appFileInput');
+            const statusDiv = document.getElementById('uploadStatus');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const downloadUrlInput = document.getElementById('appDownloadUrl');
+
+            if (!fileInput.files.length) {
+                showToast('⚠️ اختر ملفاً أولاً', 'error');
                 return;
             }
-            cloudinary.openUploadWidget({
-                cloudName: CLOUDINARY_CLOUD_NAME,
-                uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                sources: ['local', 'url'],
-                resourceType: 'raw',
-                clientAllowedFormats: ['apk', 'exe', 'dmg', 'zip', 'rar', 'ipa', '7z', 'tar.gz'],
-                maxFileSize: 200000000, // 200MB
-            }, (error, result) => {
-                if (error) {
-                    showToast('❌ فشل الرفع: ' + error.message, 'error');
-                    return;
-                }
-                if (result && result.event === 'success') {
-                    const downloadUrl = result.info.secure_url;
-                    document.getElementById('appDownloadUrl').value = downloadUrl;
-                    document.getElementById('uploadStatus').innerHTML = `✅ تم الرفع بنجاح! <a href="${downloadUrl}" target="_blank">${downloadUrl.substring(0,50)}...</a>`;
-                    showToast('✅ تم رفع الملف إلى Cloudinary', 'success');
+            const file = fileInput.files[0];
+
+            // إظهار شريط التقدم
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://tmpfiles.org/api/v1/upload', true);
+
+            // تتبع التقدم
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percent + '%';
+                    progressText.textContent = percent + '%';
                 }
             });
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success' && response.data && response.data.url) {
+                            const cleanUrl = response.data.url;
+                            downloadUrlInput.value = cleanUrl;
+                            statusDiv.innerHTML = `✅ تم الرفع: <a href="${cleanUrl}" target="_blank">${cleanUrl}</a>`;
+                            showToast('✅ تم رفع الملف بنجاح', 'success');
+                        } else {
+                            throw new Error('استجابة غير متوقعة');
+                        }
+                    } catch (e) {
+                        statusDiv.innerHTML = '❌ فشل في معالجة استجابة الخادم';
+                        showToast('❌ فشل الرفع', 'error');
+                    }
+                } else {
+                    statusDiv.innerHTML = '❌ فشل الرفع. تحقق من الاتصال أو حجم الملف';
+                    showToast('❌ فشل الرفع', 'error');
+                }
+                // إخفاء شريط التقدم بعد انتهاء
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    progressText.textContent = '';
+                }, 1500);
+            });
+
+            xhr.addEventListener('error', () => {
+                statusDiv.innerHTML = '❌ فشل الرفع بسبب خطأ في الشبكة';
+                showToast('❌ فشل الرفع', 'error');
+                progressContainer.style.display = 'none';
+                progressText.textContent = '';
+            });
+
+            xhr.send(formData);
         }
 
-        // ==================== SAVE APP ====================
         async function saveApp() {
             const name = document.getElementById('appName').value.trim();
             const shortDesc = document.getElementById('appShortDesc').value.trim();
             const downloadUrl = document.getElementById('appDownloadUrl').value.trim();
-
-            if (!name) { showToast('⚠️ اسم التطبيق مطلوب', 'error'); return; }
-            if (!shortDesc) { showToast('⚠️ الوصف المختصر مطلوب', 'error'); return; }
-            if (!downloadUrl) { showToast('⚠️ يجب رفع ملف التطبيق أو إدخال رابط التحميل', 'error'); return; }
-
-            const appData = {
-                name: name,
+            if(!name || !shortDesc || !downloadUrl) { showToast('⚠️ أكمل الحقول المطلوبة','error'); return; }
+            const data = {
+                name,
                 nameEn: document.getElementById('appNameEn').value.trim(),
                 category: document.getElementById('appCategory').value,
                 version: document.getElementById('appVersion').value.trim(),
-                shortDesc: shortDesc,
+                shortDesc,
                 fullDesc: document.getElementById('appFullDesc').value.trim(),
                 size: document.getElementById('appSize').value.trim(),
                 developer: document.getElementById('appDeveloper').value.trim(),
                 requirements: document.getElementById('appRequirements').value.trim(),
                 iconUrl: document.getElementById('appIconUrl').value.trim(),
-                downloadUrl: downloadUrl,
-                tags: document.getElementById('appTags').value.split(',').map(t => t.trim()).filter(Boolean),
-                featured: document.getElementById('appFeatured').checked,
+                downloadUrl,
+                tags: document.getElementById('appTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+                featured: document.getElementById('appFeatured').checked
             };
-
             try {
-                if (editingAppId) {
-                    await updateAppInFirestore(editingAppId, appData);
-                    showToast('✅ تم تحديث التطبيق بنجاح', 'success');
-                } else {
-                    await addAppToFirestore(appData);
-                    showToast('✅ تمت إضافة التطبيق بنجاح', 'success');
-                }
+                if(editingAppId) await updateApp(editingAppId, data);
+                else await addApp(data);
+                showToast('✅ تم الحفظ','success');
                 editingAppId = null;
                 document.getElementById('adminFormContainer').innerHTML = '';
                 await refreshApps();
                 renderAdminAppList();
                 renderApps();
-            } catch (error) {
-                console.error('Error saving app:', error);
-                showToast('❌ حدث خطأ أثناء حفظ التطبيق. تأكد من اتصال Firebase.', 'error');
-            }
+            } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
         }
-
-        async function deleteApp(appId) {
-            if (!confirm('هل أنت متأكد من حذف هذا التطبيق؟ لا يمكن التراجع عن هذا الإجراء.')) return;
-            try {
-                await deleteAppFromFirestore(appId);
-                showToast('🗑️ تم حذف التطبيق', 'info');
-                await refreshApps();
-                renderAdminAppList();
-                renderApps();
-            } catch (error) {
-                console.error('Error deleting app:', error);
-                showToast('❌ حدث خطأ أثناء الحذف', 'error');
-            }
+        async function deleteApp(id) {
+            if(!confirm('حذف التطبيق؟')) return;
+            await deleteApp(id);
+            showToast('🗑️ تم الحذف','info');
+            await refreshApps();
+            renderAdminAppList();
+            renderApps();
         }
 
         async function refreshApps() {
             allApps = await fetchApps();
             renderApps();
-            if (document.getElementById('adminAppList')) renderAdminAppList();
+            if(document.getElementById('adminAppList')) renderAdminAppList();
         }
 
-        // ==================== EVENT LISTENERS ====================
-        appModalOverlay.addEventListener('click', (e) => {
-            if (e.target === appModalOverlay) closeModal();
-        });
+        // Events
+        appModalOverlay.addEventListener('click', e=>{ if(e.target===appModalOverlay) closeModal(); });
+        adminOverlay.addEventListener('click', e=>{ if(e.target===adminOverlay) closeAdminPanel(); });
+        document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closeAdminPanel(); } });
+        window.addEventListener('scroll', ()=> header.classList.toggle('scrolled', window.scrollY>50));
 
-        adminOverlay.addEventListener('click', (e) => {
-            if (e.target === adminOverlay) closeAdminPanel();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (!appModalOverlay.classList.contains('hidden')) closeModal();
-                if (!adminOverlay.classList.contains('hidden')) closeAdminPanel();
-            }
-        });
-
-        // تغيير شكل الهيدر عند التمرير
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // ==================== بدء الموقع ====================
+        // Start
         createParticles();
         refreshApps();
-        console.log('🚀 مكتبتك الرقمية جاهزة!');
     </script>
 </body>
 </html>
