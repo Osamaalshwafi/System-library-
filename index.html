@@ -793,49 +793,48 @@
     progressText.textContent = '0%';
 
     try {
-        // الخطوة 1: إنشاء إصدارة (release) إن لم تكن موجودة، أو جلب معرف الإصدارة الحالية
+        // الحصول على أحدث إصدارة (release) أو إنشاء واحدة جديدة إذا لم توجد
         progressText.textContent = '⏳ جاري تجهيز الإصدارة...';
-        const tag = 'apps'; // علامة ثابتة
-        let releaseId = null;
-
-        // محاولة جلب الإصدارة الحالية بالعلامة
-        const getReleaseUrl = `https://api.github.com/repos/${githubRepo}/releases/tags/${tag}`;
-        const getReleaseResp = await fetch(getReleaseUrl, {
+        const releasesUrl = `https://api.github.com/repos/${githubRepo}/releases?per_page=1`;
+        const releasesResp = await fetch(releasesUrl, {
             headers: { Authorization: `token ${githubToken}` }
         });
 
-        if (getReleaseResp.ok) {
-            const releaseData = await getReleaseResp.json();
-            releaseId = releaseData.id;
-        } else if (getReleaseResp.status === 404) {
-            // إنشاء إصدارة جديدة
-            const createReleaseUrl = `https://api.github.com/repos/${githubRepo}/releases`;
-            const createResp = await fetch(createReleaseUrl, {
-                method: 'POST',
-                headers: {
-                    Authorization: `token ${githubToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tag_name: tag,
-                    name: 'مكتبة التطبيقات',
-                    body: 'ملفات تطبيقات مكتبتك الرقمية',
-                    draft: false,
-                    prerelease: false
-                })
-            });
-            if (!createResp.ok) {
-                const err = await createResp.json();
-                throw new Error('فشل إنشاء الإصدارة: ' + err.message);
+        let releaseId;
+        if (releasesResp.ok) {
+            const releases = await releasesResp.json();
+            if (releases.length > 0) {
+                releaseId = releases[0].id;
+            } else {
+                // إنشاء إصدارة جديدة لأن المستودع فارغ من الإصدارات
+                const createReleaseUrl = `https://api.github.com/repos/${githubRepo}/releases`;
+                const createResp = await fetch(createReleaseUrl, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tag_name: `app-${Date.now()}`, // علامة فريدة
+                        name: 'تطبيقات مكتبتك الرقمية',
+                        body: 'إصدارة تلقائية لملفات التطبيقات',
+                        draft: false,
+                        prerelease: false
+                    })
+                });
+                if (!createResp.ok) {
+                    const err = await createResp.json();
+                    throw new Error('فشل إنشاء الإصدارة: ' + (err.message || 'غير معروف'));
+                }
+                const releaseData = await createResp.json();
+                releaseId = releaseData.id;
             }
-            const releaseData = await createResp.json();
-            releaseId = releaseData.id;
         } else {
-            const err = await getReleaseResp.json();
-            throw new Error('خطأ في التحقق من الإصدارة: ' + err.message);
+            const err = await releasesResp.json();
+            throw new Error('فشل الاتصال بالمستودع: ' + (err.message || 'تأكد من اسم المستودع والرمز'));
         }
 
-        // الخطوة 2: رفع الملف إلى الإصدارة
+        // رفع الملف إلى الإصدارة
         progressText.textContent = '⏳ جاري رفع الملف...';
         const uploadUrl = `https://uploads.github.com/repos/${githubRepo}/releases/${releaseId}/assets?name=${encodeURIComponent(file.name)}`;
 
@@ -860,8 +859,9 @@
                 progressText.textContent = '✅ تم الرفع بنجاح';
                 showToast('✅ رفع ناجح', 'success');
             } else {
-                const err = JSON.parse(xhr.responseText);
-                progressText.textContent = '❌ فشل: ' + (err.message || 'خطأ غير معروف');
+                let errMsg = 'خطأ غير معروف';
+                try { const err = JSON.parse(xhr.responseText); errMsg = err.message || errMsg; } catch(e) {}
+                progressText.textContent = '❌ فشل: ' + errMsg;
                 showToast('❌ فشل الرفع', 'error');
             }
             setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
