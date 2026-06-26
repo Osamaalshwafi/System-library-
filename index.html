@@ -776,84 +776,110 @@
 
         // GitHub Upload with progress
         async function uploadFileToGitHub() {
-            if (!githubToken || !githubRepo) {
-                showToast('⚠️ أعد إعدادات GitHub أولاً', 'error');
-                return;
+    if (!githubToken || !githubRepo) {
+        showToast('⚠️ أعد إعدادات GitHub أولاً', 'error');
+        return;
+    }
+    const fileInput = document.getElementById('appFile');
+    if (!fileInput.files.length) { showToast('⚠️ اختر ملفاً', 'error'); return; }
+    const file = fileInput.files[0];
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const downloadUrlInput = document.getElementById('appDownloadUrl');
+
+    progressContainer.style.display = 'block';
+    progressBar.style.width = '0%';
+    progressText.textContent = '0%';
+
+    try {
+        // الخطوة 1: إنشاء إصدارة (release) إن لم تكن موجودة، أو جلب معرف الإصدارة الحالية
+        progressText.textContent = '⏳ جاري تجهيز الإصدارة...';
+        const tag = 'apps'; // علامة ثابتة
+        let releaseId = null;
+
+        // محاولة جلب الإصدارة الحالية بالعلامة
+        const getReleaseUrl = `https://api.github.com/repos/${githubRepo}/releases/tags/${tag}`;
+        const getReleaseResp = await fetch(getReleaseUrl, {
+            headers: { Authorization: `token ${githubToken}` }
+        });
+
+        if (getReleaseResp.ok) {
+            const releaseData = await getReleaseResp.json();
+            releaseId = releaseData.id;
+        } else if (getReleaseResp.status === 404) {
+            // إنشاء إصدارة جديدة
+            const createReleaseUrl = `https://api.github.com/repos/${githubRepo}/releases`;
+            const createResp = await fetch(createReleaseUrl, {
+                method: 'POST',
+                headers: {
+                    Authorization: `token ${githubToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tag_name: tag,
+                    name: 'مكتبة التطبيقات',
+                    body: 'ملفات تطبيقات مكتبتك الرقمية',
+                    draft: false,
+                    prerelease: false
+                })
+            });
+            if (!createResp.ok) {
+                const err = await createResp.json();
+                throw new Error('فشل إنشاء الإصدارة: ' + err.message);
             }
-            const fileInput = document.getElementById('appFile');
-            if (!fileInput.files.length) { showToast('⚠️ اختر ملفاً', 'error'); return; }
-            const file = fileInput.files[0];
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            const downloadUrlInput = document.getElementById('appDownloadUrl');
-
-            progressContainer.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressText.textContent = '0%';
-
-            // Step 1: read file as base64
-            const base64Promise = new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-
-            let base64Content;
-            try {
-                progressText.textContent = '⏳ جاري قراءة الملف...';
-                base64Content = await base64Promise;
-            } catch (e) {
-                progressContainer.style.display = 'none';
-                showToast('❌ فشل قراءة الملف', 'error');
-                return;
-            }
-
-            const path = `apps/${Date.now()}_${file.name}`;
-            const url = `https://api.github.com/repos/${githubRepo}/contents/${path}`;
-            const body = JSON.stringify({
-                message: `Upload ${file.name}`,
-                content: base64Content,
-                branch: githubBranch
-            });
-
-            progressText.textContent = '0%';
-            const xhr = new XMLHttpRequest();
-            xhr.open('PUT', url);
-            xhr.setRequestHeader('Authorization', `token ${githubToken}`);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    progressBar.style.width = percent + '%';
-                    progressText.textContent = percent + '%';
-                }
-            });
-
-            xhr.addEventListener('load', () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    const data = JSON.parse(xhr.responseText);
-                    downloadUrlInput.value = data.content.download_url;
-                    progressText.textContent = '✅ تم الرفع بنجاح';
-                    showToast('✅ رفع ناجح', 'success');
-                } else {
-                    const err = JSON.parse(xhr.responseText);
-                    progressText.textContent = '❌ فشل: ' + (err.message || 'خطأ غير معروف');
-                    showToast('❌ فشل الرفع', 'error');
-                }
-                setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
-            });
-
-            xhr.addEventListener('error', () => {
-                progressText.textContent = '❌ خطأ في الشبكة';
-                showToast('❌ فشل الاتصال', 'error');
-                progressContainer.style.display = 'none';
-            });
-
-            xhr.send(body);
+            const releaseData = await createResp.json();
+            releaseId = releaseData.id;
+        } else {
+            const err = await getReleaseResp.json();
+            throw new Error('خطأ في التحقق من الإصدارة: ' + err.message);
         }
+
+        // الخطوة 2: رفع الملف إلى الإصدارة
+        progressText.textContent = '⏳ جاري رفع الملف...';
+        const uploadUrl = `https://uploads.github.com/repos/${githubRepo}/releases/${releaseId}/assets?name=${encodeURIComponent(file.name)}`;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', uploadUrl);
+        xhr.setRequestHeader('Authorization', `token ${githubToken}`);
+        xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                progressBar.style.width = percent + '%';
+                progressText.textContent = percent + '%';
+            }
+        });
+
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                const asset = JSON.parse(xhr.responseText);
+                const directUrl = asset.browser_download_url;
+                downloadUrlInput.value = directUrl;
+                progressText.textContent = '✅ تم الرفع بنجاح';
+                showToast('✅ رفع ناجح', 'success');
+            } else {
+                const err = JSON.parse(xhr.responseText);
+                progressText.textContent = '❌ فشل: ' + (err.message || 'خطأ غير معروف');
+                showToast('❌ فشل الرفع', 'error');
+            }
+            setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
+        });
+
+        xhr.addEventListener('error', () => {
+            progressText.textContent = '❌ خطأ في الشبكة';
+            showToast('❌ فشل الاتصال', 'error');
+            progressContainer.style.display = 'none';
+        });
+
+        xhr.send(file);
+    } catch (e) {
+        progressText.textContent = '❌ ' + e.message;
+        showToast('❌ ' + e.message, 'error');
+        progressContainer.style.display = 'none';
+    }
+}
 
         async function saveApp() {
             const name = document.getElementById('appName').value.trim();
