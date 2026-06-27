@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="مكتبتك الرقمية - منصة تحميل التطبيقات المجانية للهاتف والحاسوب.">
     <title>مكتبتك الرقمية | منصة تحميل التطبيقات</title>
+    <!-- Firebase (Firestore) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --bg: #f5f7fb;
-            --surface: #fff;
+            --surface: #ffffff;
             --surface-alt: #f0f2f8;
             --text: #1a1d2e;
             --text-secondary: #5a5f78;
             --text-muted: #8b8fa8;
             --primary: #5b4cf0;
+            --primary-light: #7c6ff7;
             --primary-dark: #4338ca;
-            --primary-glow: rgba(91,76,240,0.25);
+            --primary-glow: rgba(91, 76, 240, 0.25);
             --accent: #f7931e;
             --green: #10b981;
             --red: #ef4444;
@@ -24,54 +27,100 @@
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --shadow: 0 4px 16px rgba(0,0,0,0.06);
             --shadow-lg: 0 20px 50px rgba(0,0,0,0.1);
+            --shadow-xl: 0 32px 64px rgba(0,0,0,0.12);
             --radius-sm: 10px;
             --radius: 16px;
-            --transition: 0.3s;
-            --font: 'Segoe UI','Tajawal',sans-serif;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+            --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+            --transition-fast: 0.18s;
+            --font: 'Segoe UI', 'Tajawal', 'Cairo', system-ui, -apple-system, sans-serif;
         }
-        * {margin:0;padding:0;box-sizing:border-box}
-        body {font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6}
-        .header {position:sticky;top:0;background:rgba(255,255,255,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;z-index:100}
-        .nav {max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
-        .logo {font-size:1.5rem;font-weight:800;color:var(--primary);text-decoration:none}
-        .btn {padding:10px 20px;border-radius:50px;font-weight:600;border:none;cursor:pointer;background:var(--primary);color:#fff;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px}
-        .btn-outline {background:transparent;color:var(--primary);border:2px solid var(--primary)}
-        .btn-danger {background:var(--red)}
-        .btn-sm {padding:6px 14px;font-size:0.8rem}
-        .hero {text-align:center;padding:50px 20px}
-        .hero h1 {font-size:clamp(2rem,5vw,3rem);font-weight:900;background:linear-gradient(135deg,var(--text),var(--primary-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .apps-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1300px;margin:20px auto;padding:0 20px}
-        .app-card {background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);cursor:pointer;transition:var(--transition)}
-        .app-card:hover {transform:translateY(-5px);box-shadow:var(--shadow-lg)}
-        .app-icon {width:56px;height:56px;border-radius:var(--radius-sm);object-fit:cover;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#fff;background:linear-gradient(135deg,var(--primary),#7c6ff7)}
-        .app-name {font-weight:800;margin:8px 0}
-        .modal-overlay {position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:200}
-        .modal {background:var(--surface);border-radius:var(--radius);max-width:500px;width:90%;padding:30px;max-height:85vh;overflow-y:auto}
-        .btn-download {display:block;width:100%;padding:16px;background:var(--green);color:#fff;border:none;border-radius:60px;font-size:1.1rem;font-weight:800;margin-top:20px;cursor:pointer}
-        .hidden {display:none}
-        .toast {position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:12px 24px;border-radius:50px;z-index:999}
-        .form-group {margin-bottom:16px}
-        .form-group label {display:block;font-weight:700;margin-bottom:5px}
-        .form-group input, .form-group textarea, .form-group select {width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font)}
-        .debug-box {background:#1e1e2f;color:#a0ffa0;padding:10px;border-radius:8px;font-family:monospace;font-size:0.85rem;white-space:pre-wrap;margin-top:10px;max-height:150px;overflow-y:auto}
-        .progress-container {margin-top:8px;background:var(--surface-alt);border-radius:50px;height:10px;overflow:hidden}
-        .progress-bar {height:100%;width:0%;background:var(--primary);border-radius:50px;transition:width 0.3s}
-        .footer {text-align:center;padding:30px;color:var(--text-muted)}
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6; overflow-x:hidden; }
+        .header { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.8); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 20px; }
+        .nav { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+        .logo { font-size:1.5rem; font-weight:800; color:var(--primary); text-decoration:none; }
+        .btn { padding:10px 20px; border-radius:50px; font-weight:600; border:none; cursor:pointer; background:var(--primary); color:#fff; font-size:0.9rem; display:inline-flex; align-items:center; gap:6px; transition:var(--transition-fast); }
+        .btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+        .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
+        .btn-danger { background:var(--red); }
+        .btn-sm { padding:6px 14px; font-size:0.8rem; }
+        .hero { text-align:center; padding:50px 20px 30px; }
+        .hero h1 { font-size:clamp(2rem,5vw,3.2rem); font-weight:900; background:linear-gradient(135deg,var(--text),var(--primary-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .hero-subtitle { color:var(--text-secondary); max-width:600px; margin:0 auto 20px; }
+        .hero-stats { display:flex; justify-content:center; gap:30px; flex-wrap:wrap; }
+        .hero-stat { text-align:center; }
+        .hero-stat-value { font-size:2rem; font-weight:900; color:var(--primary); }
+        .hero-stat-label { font-size:0.85rem; color:var(--text-muted); }
+        .apps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:20px; max-width:1300px; margin:20px auto; padding:0 20px; }
+        .app-card { background:var(--surface); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-sm); cursor:pointer; transition:var(--transition); border:2px solid transparent; position:relative; overflow:hidden; }
+        .app-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-xl); border-color:var(--primary-light); }
+        .app-card::after { content:''; position:absolute; top:-50%; right:-50%; width:100%; height:100%; background:radial-gradient(circle, var(--primary-glow) 0%, transparent 70%); opacity:0; transition:0.5s; }
+        .app-card:hover::after { opacity:1; }
+        .app-icon { width:56px; height:56px; border-radius:var(--radius-sm); object-fit:cover; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:#fff; background:linear-gradient(135deg,var(--primary),var(--primary-light)); }
+        .app-name { font-weight:800; font-size:1.05rem; margin:10px 0 4px; }
+        .app-desc { color:var(--text-secondary); font-size:0.9rem; }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; z-index:200; }
+        .modal { background:var(--surface); border-radius:var(--radius-xl); max-width:520px; width:90%; max-height:85vh; overflow-y:auto; padding:30px; animation:modalIn 0.3s; }
+        @keyframes modalIn { from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
+        .modal-close { float:left; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text); }
+        .btn-download { display:block; width:100%; padding:16px; background:var(--green); color:#fff; border:none; border-radius:60px; font-size:1.1rem; font-weight:800; margin-top:20px; cursor:pointer; }
+        .form-group { margin-bottom:16px; }
+        .form-group label { display:block; font-weight:700; margin-bottom:5px; color:var(--text); }
+        .form-group input, .form-group textarea, .form-group select { width:100%; padding:10px 14px; border:2px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); }
+        .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#10b981; color:#fff; padding:12px 24px; border-radius:50px; z-index:999; font-weight:600; animation:toastIn 0.4s; }
+        @keyframes toastIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+        .hidden { display:none !important; }
+        .footer { text-align:center; padding:30px; color:var(--text-muted); }
+        .particles-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+        .particle { position:absolute; border-radius:50%; animation:floatUp linear infinite; opacity:0; }
+        @keyframes floatUp { 0%{transform:translateY(105vh) scale(0);opacity:0;} 10%{opacity:1;} 90%{opacity:0.5;} 100%{transform:translateY(-10vh) scale(1.2);opacity:0;} }
+        .progress-container { margin-top:8px; background:var(--surface-alt); border-radius:50px; height:12px; overflow:hidden; }
+        .progress-bar { height:100%; width:0%; background:var(--primary); border-radius:50px; transition: width 0.3s; }
+        .progress-text { font-size:0.8rem; color:var(--text-muted); margin-top:4px; }
+        .debug-box { background: #1e1e2f; color: #a0ffa0; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; margin-top: 10px; max-height: 120px; overflow-y: auto; }
     </style>
 </head>
 <body>
-    <header class="header"><nav class="nav"><a href="#" class="logo">📱 مكتبتك الرقمية</a><button class="btn" onclick="openAdmin()">⚙️ لوحة التحكم</button></nav></header>
-    <section class="hero"><h1>مكتبتك الرقمية المتكاملة</h1><p>حمل التطبيقات مباشرة إلى جهازك</p></section>
-    <div class="apps-grid" id="appsGrid"></div>
-    <footer class="footer">© 2025 مكتبتك الرقمية</footer>
+    <div class="particles-container" id="particlesContainer"></div>
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo">📱 مكتبتك الرقمية</a>
+            <button class="btn" onclick="openAdminPanel()">⚙️ لوحة التحكم</button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>مكتبتك الرقمية المتكاملة</h1>
+            <p class="hero-subtitle">اكتشف وحمّل أفضل التطبيقات والبرامج لهاتفك وحاسوبك من مكان واحد.</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="hero-stat-value" id="statAppsCount">0</div><div class="hero-stat-label">تطبيق</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="statDownloads">0</div><div class="hero-stat-label">تحميل</div></div>
+            </div>
+        </section>
+        <div class="apps-grid" id="appsGrid"></div>
+    </main>
+    <footer class="footer">© 2025 <strong>مكتبتك الرقمية</strong> · صُنع بحب ❤️</footer>
 
     <!-- App Modal -->
-    <div class="modal-overlay hidden" id="appModal"><div class="modal"><button onclick="closeAppModal()" style="float:left;background:none;border:none;font-size:1.5rem;">✕</button><div id="modalBody"></div></div></div>
+    <div class="modal-overlay hidden" id="appModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
     <!-- Admin Modal -->
-    <div class="modal-overlay hidden" id="adminModal"><div class="modal" style="max-width:700px;"><button onclick="closeAdmin()" style="float:left;background:none;border:none;font-size:1.5rem;">✕</button><div id="adminContent"></div></div></div>
+    <div class="modal-overlay hidden" id="adminModal">
+        <div class="modal" style="max-width:700px;">
+            <button class="modal-close" onclick="closeAdminPanel()">✕</button>
+            <div id="adminContent"></div>
+        </div>
+    </div>
 
     <script>
-        // Firebase
+        // ==================== FIREBASE CONFIGURATION ====================
         firebase.initializeApp({
             apiKey: "AIzaSyDvDaK7HtwtQ_VmR9cKoDq6sdrUyL_Hfls",
             authDomain: "system-library-52cc1.firebaseapp.com",
@@ -81,76 +130,169 @@
             appId: "1:139702257477:web:1615f6c263afb3e1d1e02c"
         });
         const db = firebase.firestore();
-        const ADMIN_PASS = 'admin2025digital';
-        let apps = [], isAdmin = false, githubToken = localStorage.getItem('gt') || '', githubRepo = localStorage.getItem('gr') || '';
 
-        // Toast & Debug
-        function toast(msg, type='info') { const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
-        function showDebug(title, text) { const d = document.getElementById('debugContainer'); if(d) d.innerHTML = `<strong>${title}:</strong><div class="debug-box">${text}</div>`; }
+        const ADMIN_PASSWORD = 'admin2025digital';
+        let allApps = [], isAdminLoggedIn = false, editingAppId = null;
+        let githubToken = localStorage.getItem('github_token') || '';
+        let githubRepo = localStorage.getItem('github_repo') || '';
 
-        // Load Apps
-        async function loadApps() {
+        // DOM
+        const appsGrid = document.getElementById('appsGrid');
+        const appModal = document.getElementById('appModal');
+        const modalBody = document.getElementById('modalBody');
+        const adminModal = document.getElementById('adminModal');
+        const adminContent = document.getElementById('adminContent');
+        const statAppsCount = document.getElementById('statAppsCount');
+        const statDownloads = document.getElementById('statDownloads');
+
+        // Particles
+        (function createParticles() {
+            const colors = ['#5b4cf0','#7c6ff7','#f7931e','#10b981','#06b6d4','#8b5cf6'];
+            for (let i=0; i<35; i++) {
+                const p = document.createElement('div'); p.className='particle';
+                p.style.width = (Math.random()*8+3)+'px'; p.style.height = p.style.width;
+                p.style.left = Math.random()*100+'%';
+                p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                p.style.animationDuration = (Math.random()*14+8)+'s';
+                p.style.animationDelay = Math.random()*12+'s';
+                document.getElementById('particlesContainer').appendChild(p);
+            }
+        })();
+
+        function showToast(msg, type='info') {
+            const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+            document.body.appendChild(t); setTimeout(()=>t.remove(),3000);
+        }
+        function showDebug(title, text) {
+            const container = document.getElementById('debugContainer');
+            if(container) container.innerHTML = `<strong>${title}:</strong><div class="debug-box">${text}</div>`;
+        }
+
+        // Firestore
+        async function fetchApps() {
             const snap = await db.collection('apps').orderBy('createdAt','desc').get();
-            apps = []; snap.forEach(d => apps.push({id:d.id, ...d.data()}));
-            document.getElementById('appsGrid').innerHTML = apps.length ? apps.map(a => `
-                <div class="app-card" onclick="openApp('${a.id}')">
-                    <div class="app-icon">📦</div>
-                    <div class="app-name">${a.name}</div>
-                    <div>${a.shortDesc||''}</div>
-                </div>`).join('') : '<p>لا توجد تطبيقات</p>';
+            allApps = []; snap.forEach(d => allApps.push({id:d.id,...d.data()}));
         }
-
-        function openApp(id) {
-            const a = apps.find(x=>x.id===id); if(!a) return;
-            document.getElementById('modalBody').innerHTML = `
-                <h2>${a.name}</h2>
-                <p>${a.fullDesc||a.shortDesc}</p>
-                <a href="${a.downloadUrl}" class="btn-download" onclick="event.preventDefault();downloadApp('${a.id}','${a.downloadUrl}')">⬇️ تحميل الآن</a>
-            `;
-            document.getElementById('appModal').classList.remove('hidden');
+        async function addApp(data) {
+            await db.collection('apps').add({...data, downloads:0, createdAt:firebase.firestore.FieldValue.serverTimestamp()});
         }
-        function closeAppModal() { document.getElementById('appModal').classList.add('hidden'); }
-        async function downloadApp(id, url) {
+        async function updateApp(id, data) { await db.collection('apps').doc(id).update(data); }
+        async function deleteApp(id) { await db.collection('apps').doc(id).delete(); }
+        async function incrementDownload(id) {
             await db.collection('apps').doc(id).update({downloads:firebase.firestore.FieldValue.increment(1)});
-            const a = document.createElement('a'); a.href=url; a.download=''; document.body.appendChild(a); a.click(); a.remove();
-            toast('✅ جاري التحميل...');
         }
 
-        // Admin
-        function openAdmin() {
-            if(!isAdmin) showLogin(); else showDashboard();
-            document.getElementById('adminModal').classList.remove('hidden');
+        function renderApps() {
+            if (!allApps.length) {
+                appsGrid.innerHTML = '<p style="text-align:center;color:var(--text-muted);">لا توجد تطبيقات بعد</p>';
+                return;
+            }
+            appsGrid.innerHTML = allApps.map(app => `
+                <div class="app-card" onclick="openAppDetail('${app.id}')">
+                    <div class="app-icon">📦</div>
+                    <div class="app-name">${app.name || 'تطبيق'}</div>
+                    <div class="app-desc">${app.shortDesc || ''}</div>
+                    <div style="margin-top:8px;color:var(--primary);">⬇️ ${app.downloads||0}</div>
+                </div>
+            `).join('');
+            statAppsCount.textContent = allApps.length;
+            statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0);
         }
-        function closeAdmin() { document.getElementById('adminModal').classList.add('hidden'); }
+
+        function openAppDetail(id) {
+            const app = allApps.find(a=>a.id===id); if(!app) return;
+            modalBody.innerHTML = `
+                <h2>${app.name}</h2>
+                <p>${app.fullDesc || app.shortDesc}</p>
+                <p><strong>الإصدار:</strong> ${app.version||'?'} | <strong>الحجم:</strong> ${app.size||'?'}</p>
+                <a href="${app.downloadUrl}" class="btn-download" onclick="handleDownload(event,'${app.id}')">⬇️ تحميل الآن</a>
+            `;
+            appModal.classList.remove('hidden');
+        }
+        function closeModal() { appModal.classList.add('hidden'); }
+        async function handleDownload(e, appId) {
+            e.preventDefault();
+            await incrementDownload(appId);
+            const app = allApps.find(a=>a.id===appId);
+            if(app) {
+                const a = document.createElement('a');
+                a.href = app.downloadUrl;
+                a.download = '';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            showToast('✅ جاري التحميل...', 'success');
+            setTimeout(()=>{ closeModal(); refreshAll(); }, 800);
+        }
+
+        // Admin Panel
+        function openAdminPanel() {
+            if(!isAdminLoggedIn) showLogin(); else showDashboard();
+            adminModal.classList.remove('hidden');
+        }
+        function closeAdminPanel() { adminModal.classList.add('hidden'); }
         function showLogin() {
-            document.getElementById('adminContent').innerHTML = `<h2>دخول</h2><input id="pass" placeholder="كلمة المرور" style="width:100%;padding:10px;"><br><button class="btn" onclick="login()">دخول</button>`;
+            adminContent.innerHTML = `
+                <h2>🔐 دخول لوحة التحكم</h2>
+                <div class="form-group"><input type="password" id="adminPass" placeholder="كلمة المرور"></div>
+                <button class="btn" onclick="adminLogin()">دخول</button>
+            `;
         }
-        function login() {
-            if(document.getElementById('pass').value===ADMIN_PASS){ isAdmin=true; showDashboard(); } else toast('❌ خطأ');
+        function adminLogin() {
+            if(document.getElementById('adminPass').value === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                showToast('✅ تم الدخول', 'success');
+                showDashboard();
+            } else showToast('❌ كلمة مرور خاطئة', 'error');
         }
         function showDashboard() {
-            document.getElementById('adminContent').innerHTML = `
-                <h2>لوحة التحكم</h2>
-                <button class="btn btn-sm" onclick="showAddForm()">➕ إضافة تطبيق</button>
-                <button class="btn btn-sm btn-outline" onclick="showGitHubSettings()">🔑 إعدادات GitHub</button>
-                <div style="margin-top:20px;">${apps.map(a=>`<div>${a.name} <button class="btn-danger btn-sm" onclick="deleteApp('${a.id}')">حذف</button></div>`).join('')}</div>
-                <div id="formContainer"></div>`;
+            adminContent.innerHTML = `
+                <h2>⚙️ لوحة التحكم</h2>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+                    <button class="btn btn-sm" onclick="showAddForm()">➕ إضافة تطبيق</button>
+                    <button class="btn btn-sm btn-outline" onclick="refreshAll()">🔄 تحديث</button>
+                    <button class="btn btn-sm btn-outline" onclick="showGitHubSettings()">🔑 إعدادات GitHub</button>
+                    <button class="btn btn-sm btn-danger" onclick="isAdminLoggedIn=false;showLogin();">🚪 خروج</button>
+                </div>
+                <div id="adminAppList"></div>
+                <div id="adminFormContainer"></div>
+            `;
+            renderAdminAppList();
+        }
+        function renderAdminAppList() {
+            const list = document.getElementById('adminAppList');
+            if(!list) return;
+            if(!allApps.length) { list.innerHTML='<p>لا توجد تطبيقات</p>'; return; }
+            list.innerHTML = allApps.map(a => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--surface-alt);margin-bottom:6px;border-radius:8px;">
+                    <span><strong>${a.name}</strong> (${a.category||'عام'})</span>
+                    <div>
+                        <button class="btn btn-sm btn-outline" onclick="editApp('${a.id}')">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteAppConfirmed('${a.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function showGitHubSettings() {
-            document.getElementById('formContainer').innerHTML = `
+            document.getElementById('adminFormContainer').innerHTML = `
                 <h3>إعدادات GitHub</h3>
-                <div class="form-group"><label>رمز الوصول</label><input id="ghToken" value="${githubToken}" placeholder="github_pat_..."></div>
-                <div class="form-group"><label>اسم المستودع (owner/repo)</label><input id="ghRepo" value="${githubRepo}" placeholder="ahmed/my-apps"></div>
-                <button class="btn btn-sm" onclick="verifyConnection()">📡 تحقق من الاتصال</button>
-                <button class="btn btn-sm" onclick="saveGHSettings()">💾 حفظ</button>
-                <div id="debugContainer" style="margin-top:12px;"></div>`;
+                <div class="form-group"><label>رمز الوصول</label><input type="password" id="ghToken" value="${githubToken}" placeholder="github_pat_..."></div>
+                <div class="form-group"><label>اسم المستودع (username/repo)</label><input type="text" id="ghRepo" value="${githubRepo}" placeholder="ahmed/my-apps"></div>
+                <div style="display:flex;gap:10px;margin-top:12px;">
+                    <button class="btn btn-sm" onclick="verifyConnection()">📡 تحقق من الاتصال</button>
+                    <button class="btn btn-primary btn-sm" onclick="saveGitHubSettings()">💾 حفظ الإعدادات</button>
+                </div>
+                <div id="debugContainer" style="margin-top:12px;"></div>
+            `;
         }
 
         async function verifyConnection() {
             const token = document.getElementById('ghToken').value.trim();
             const repo = document.getElementById('ghRepo').value.trim().replace(/\s/g,'');
             if(!token||!repo) return showDebug('خطأ','أدخل البيانات');
+            showDebug('⏳','جاري التحقق...');
             try {
                 const res = await fetch(`https://api.github.com/repos/${repo}`, {headers:{Authorization:`token ${token}`}});
                 const data = await res.json();
@@ -159,53 +301,136 @@
             } catch(e) { showDebug('❌', e.message); }
         }
 
-        function saveGHSettings() {
+        function saveGitHubSettings() {
             githubToken = document.getElementById('ghToken').value.trim();
             githubRepo = document.getElementById('ghRepo').value.trim().replace(/\s/g,'');
-            localStorage.setItem('gt', githubToken);
-            localStorage.setItem('gr', githubRepo);
-            toast('✅ تم الحفظ');
+            localStorage.setItem('github_token', githubToken);
+            localStorage.setItem('github_repo', githubRepo);
+            showToast('✅ تم الحفظ', 'success');
             showDashboard();
         }
 
-        function showAddForm() {
-            document.getElementById('formContainer').innerHTML = `
-                <h3>إضافة تطبيق</h3>
-                <div class="form-group"><label>اسم التطبيق (عربي) *</label><input id="appName"></div>
-                <div class="form-group"><label>اسم إنجليزي</label><input id="appNameEn"></div>
-                <div class="form-group"><label>وصف مختصر</label><textarea id="appShortDesc"></textarea></div>
-                <div class="form-group"><label>وصف كامل</label><textarea id="appFullDesc"></textarea></div>
-                <div class="form-group"><label>الإصدار</label><input id="appVersion"></div>
-                <div class="form-group"><label>الحجم</label><input id="appSize"></div>
-                <div class="form-group"><label>المطور</label><input id="appDeveloper"></div>
-                <div class="form-group"><label>رابط الأيقونة</label><input id="appIconUrl"></div>
-                <div class="form-group"><label>ملف التطبيق (APK/EXE)</label><input type="file" id="appFile"></div>
-                <button class="btn btn-sm" onclick="uploadToGitHub()">📤 رفع إلى GitHub</button>
-                <div id="uploadStatus" style="margin-top:8px;"><div class="progress-container" id="progressContainer" style="display:none"><div class="progress-bar" id="progressBar"></div></div><div id="progressText"></div></div>
-                <div class="form-group"><label>أو رابط تحميل مباشر (Google Drive)</label><input id="manualDownloadUrl" placeholder="https://drive.google.com/uc?export=download&id=..."><small>ادخل رابطاً مباشراً إذا تعذر الرفع</small></div>
-                <input type="hidden" id="appDownloadUrl">
-                <div class="form-group"><label>وسوم</label><input id="appTags"></div>
-                <button class="btn" onclick="saveApp()">💾 حفظ</button>`;
+        function showAddForm() { editingAppId=null; renderAppForm(); }
+        function editApp(id) { editingAppId=id; const app = allApps.find(a=>a.id===id); renderAppForm(app); }
+
+        function renderAppForm(app=null) {
+            document.getElementById('adminFormContainer').innerHTML = `
+                <hr><h3>${app?'✏️ تعديل التطبيق':'➕ إضافة تطبيق جديد'}</h3>
+                <div class="form-group"><label>اسم التطبيق (بالعربية) *</label><input id="appName" value="${app?.name||''}" placeholder="واتساب بلس"></div>
+                <div class="form-group"><label>اسم إنجليزي</label><input id="appNameEn" value="${app?.nameEn||''}"></div>
+                <div class="form-group"><label>الفئة</label><select id="appCategory">
+                    <option value="mobile" ${app?.category==='mobile'?'selected':''}>📱 تطبيقات الهاتف</option>
+                    <option value="desktop" ${app?.category==='desktop'?'selected':''}>💻 تطبيقات الحاسوب</option>
+                    <option value="games" ${app?.category==='games'?'selected':''}>🎮 ألعاب</option>
+                    <option value="tools" ${app?.category==='tools'?'selected':''}>🛠️ أدوات</option>
+                    <option value="education" ${app?.category==='education'?'selected':''}>📚 تعليم</option>
+                </select></div>
+                <div class="form-group"><label>الإصدار</label><input id="appVersion" value="${app?.version||''}"></div>
+                <div class="form-group"><label>وصف مختصر *</label><textarea id="appShortDesc">${app?.shortDesc||''}</textarea></div>
+                <div class="form-group"><label>وصف كامل</label><textarea id="appFullDesc">${app?.fullDesc||''}</textarea></div>
+                <div class="form-group"><label>الحجم</label><input id="appSize" value="${app?.size||''}"></div>
+                <div class="form-group"><label>المطور</label><input id="appDeveloper" value="${app?.developer||''}"></div>
+                <div class="form-group"><label>المتطلبات</label><input id="appRequirements" value="${app?.requirements||''}"></div>
+                <div class="form-group"><label>رابط الأيقونة</label><input id="appIconUrl" value="${app?.iconUrl||''}"></div>
+                <div class="form-group">
+                    <label>ملف التطبيق (APK/EXE...)</label>
+                    <input type="file" id="appFile" accept=".apk,.exe,.dmg,.zip,.rar,.ipa,.7z">
+                    <div style="display:flex;gap:10px;margin-top:8px;">
+                        <button type="button" class="btn btn-sm" onclick="uploadToGitHub()">📤 رفع إلى GitHub</button>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="uploadToTmpfiles()">📤 رفع إلى tmpfiles.org</button>
+                    </div>
+                    <input type="hidden" id="appDownloadUrl" value="${app?.downloadUrl||''}">
+                    <div id="uploadProgressContainer" style="margin-top:8px;">
+                        ${app?.downloadUrl ? `<div>✅ الرابط الحالي: ${app.downloadUrl.substring(0,50)}...</div>` : ''}
+                        <div class="progress-container" id="progressContainer" style="display:none;">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="progress-text" id="progressText"></div>
+                    </div>
+                </div>
+                <div class="form-group"><label>وسوم (مفصولة بفواصل)</label><input id="appTags" value="${(app?.tags||[]).join(',')}"></div>
+                <div class="form-group"><label><input type="checkbox" id="appFeatured" ${app?.featured?'checked':''}> مميز</label></div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-primary" onclick="saveApp()">💾 ${app?'تحديث':'حفظ'}</button>
+                    <button class="btn btn-ghost" onclick="showDashboard()">إلغاء</button>
+                </div>
+            `;
         }
 
-        async function uploadToGitHub() {
-            if (!githubToken || !githubRepo) { toast('⚠️ أعد إعدادات GitHub أولاً'); return; }
+        // رفع إلى tmpfiles.org (احتياطي مضمون)
+        async function uploadToTmpfiles() {
             const fileInput = document.getElementById('appFile');
-            if (!fileInput.files.length) { toast('⚠️ اختر ملفاً'); return; }
+            if (!fileInput.files.length) { showToast('⚠️ اختر ملفاً', 'error'); return; }
             const file = fileInput.files[0];
-            // تنظيف الاسم
-            let cleanName = file.name.replace(/\s+/g, '_');
-            cleanName = cleanName.replace(/[^\w.-]/g, '');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const downloadUrlInput = document.getElementById('appDownloadUrl');
+
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://tmpfiles.org/api/v1/upload', true);
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const pct = Math.round(e.loaded / e.total * 100);
+                    progressBar.style.width = pct + '%';
+                    progressText.textContent = pct + '%';
+                }
+            });
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    try {
+                        const res = JSON.parse(xhr.responseText);
+                        if (res.status === 'success' && res.data && res.data.url) {
+                            downloadUrlInput.value = res.data.url;
+                            progressText.textContent = '✅ تم الرفع بنجاح';
+                            showToast('✅ رفع ناجح', 'success');
+                        } else {
+                            throw new Error('استجابة غير متوقعة');
+                        }
+                    } catch(e) {
+                        progressText.textContent = '❌ فشل في معالجة الرد';
+                        showToast('❌ فشل', 'error');
+                    }
+                } else {
+                    progressText.textContent = '❌ فشل الرفع';
+                    showToast('❌ فشل', 'error');
+                }
+                setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
+            });
+            xhr.addEventListener('error', () => {
+                progressText.textContent = '❌ خطأ شبكة';
+                progressContainer.style.display = 'none';
+            });
+            xhr.send(formData);
+        }
+
+        // رفع إلى GitHub (مع تفاصيل الخطأ)
+        async function uploadToGitHub() {
+            if (!githubToken || !githubRepo) {
+                showToast('⚠️ أعد إعدادات GitHub أولاً', 'error');
+                return;
+            }
+            const fileInput = document.getElementById('appFile');
+            if (!fileInput.files.length) { showToast('⚠️ اختر ملفاً', 'error'); return; }
+            const file = fileInput.files[0];
+            let cleanName = file.name.replace(/\s+/g, '_').replace(/[^\w.-]/g, '');
             if (cleanName.length > 100) cleanName = cleanName.substring(0, 100);
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
-            const hiddenInput = document.getElementById('appDownloadUrl');
+            const downloadUrlInput = document.getElementById('appDownloadUrl');
+
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
             progressText.textContent = '0%';
+
             try {
-                // إصدارة
                 progressText.textContent = '⏳ تجهيز الإصدارة...';
                 let releaseId;
                 let resp = await fetch(`https://api.github.com/repos/${githubRepo}/releases?per_page=1`, {headers:{Authorization:`token ${githubToken}`}});
@@ -226,7 +451,6 @@
                     const data = await resp.json();
                     releaseId = data.id;
                 }
-                // رفع
                 progressText.textContent = '0%';
                 const uploadUrl = `https://uploads.github.com/repos/${githubRepo}/releases/${releaseId}/assets?name=${encodeURIComponent(cleanName)}`;
                 const xhr = new XMLHttpRequest();
@@ -243,9 +467,9 @@
                 xhr.onload = () => {
                     if(xhr.status >= 200 && xhr.status < 300) {
                         const asset = JSON.parse(xhr.responseText);
-                        hiddenInput.value = asset.browser_download_url;
+                        downloadUrlInput.value = asset.browser_download_url;
                         progressText.textContent = '✅ تم الرفع';
-                        toast('✅ رفع ناجح');
+                        showToast('✅ رفع ناجح', 'success');
                     } else {
                         let detail = xhr.responseText;
                         try { detail = JSON.stringify(JSON.parse(xhr.responseText), null, 2); } catch(e){}
@@ -265,32 +489,58 @@
 
         async function saveApp() {
             const name = document.getElementById('appName').value.trim();
-            const downloadUrl = document.getElementById('appDownloadUrl').value.trim() || document.getElementById('manualDownloadUrl').value.trim();
-            if(!name || !downloadUrl) return toast('⚠️ املأ الحقول المطلوبة');
-            await db.collection('apps').add({
+            const shortDesc = document.getElementById('appShortDesc').value.trim();
+            const downloadUrl = document.getElementById('appDownloadUrl').value.trim();
+            if(!name || !shortDesc || !downloadUrl) { showToast('⚠️ أكمل الحقول المطلوبة','error'); return; }
+            const data = {
                 name,
                 nameEn: document.getElementById('appNameEn').value.trim(),
-                shortDesc: document.getElementById('appShortDesc').value.trim(),
-                fullDesc: document.getElementById('appFullDesc').value.trim(),
+                category: document.getElementById('appCategory').value,
                 version: document.getElementById('appVersion').value.trim(),
+                shortDesc,
+                fullDesc: document.getElementById('appFullDesc').value.trim(),
                 size: document.getElementById('appSize').value.trim(),
                 developer: document.getElementById('appDeveloper').value.trim(),
+                requirements: document.getElementById('appRequirements').value.trim(),
                 iconUrl: document.getElementById('appIconUrl').value.trim(),
                 downloadUrl,
                 tags: document.getElementById('appTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-                downloads:0,
-                createdAt:firebase.firestore.FieldValue.serverTimestamp()
-            });
-            closeAdmin();
-            loadApps();
-            toast('✅ تمت الإضافة');
+                featured: document.getElementById('appFeatured').checked
+            };
+            try {
+                if(editingAppId) await updateApp(editingAppId, data);
+                else await addApp(data);
+                showToast('✅ تم الحفظ','success');
+                editingAppId = null;
+                showDashboard();
+                refreshAll();
+            } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
         }
 
-        async function deleteApp(id) {
-            if(confirm('حذف؟')) { await db.collection('apps').doc(id).delete(); loadApps(); }
+        async function deleteAppConfirmed(id) {
+            if(!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
+            await deleteApp(id);
+            showToast('🗑️ تم الحذف','info');
+            refreshAll();
+            showDashboard();
         }
 
-        loadApps();
+        async function refreshAll() {
+            await fetchApps();
+            renderApps();
+            if(document.getElementById('adminAppList')) renderAdminAppList();
+        }
+
+        // Close modals on overlay click
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                appModal.classList.add('hidden');
+                adminModal.classList.add('hidden');
+            }
+        });
+
+        // Initialize
+        refreshAll();
     </script>
 </body>
 </html>
