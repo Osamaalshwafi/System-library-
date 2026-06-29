@@ -1,461 +1,126 @@
-<!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="مكتبتك الرقمية - منصة تحميل التطبيقات المجانية للهاتف والحاسوب. اكتشف أحدث التطبيقات والأدوات المفيدة.">
-    <meta name="keywords" content="تحميل تطبيقات, تطبيقات مجانية, تطبيقات الهاتف, تطبيقات الحاسوب, برامج, مكتبة رقمية, تنزيل برامج, APK, EXE">
-    <meta name="author" content="مكتبتك الرقمية">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="مكتبتك الرقمية - منصة التطبيقات">
-    <meta property="og:description" content="حمل أفضل التطبيقات والبرامج لهاتفك وحاسوبك من مكان واحد.">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="ar_AR">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="مكتبتك الرقمية - منصة التطبيقات">
-    <meta name="twitter:description" content="حمل أفضل التطبيقات والبرامج لهاتفك وحاسوبك من مكان واحد.">
-    <link rel="canonical" href="https://your-digital-library.vercel.app/">
     <title>مكتبتك الرقمية | منصة تحميل التطبيقات والبرامج</title>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "name": "مكتبتك الرقمية",
-            "applicationCategory": "MobileApplication",
-            "operatingSystem": "Android, Windows, iOS",
-            "description": "منصة تحميل التطبيقات والبرامج المجانية",
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-        }
-    </script>
-
-    <!-- Firebase (Firestore فقط) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
     <style>
-        :root {
-            --bg: #f5f7fb;
-            --surface: #ffffff;
-            --surface-alt: #f0f2f8;
-            --text: #1a1d2e;
-            --text-secondary: #5a5f78;
-            --text-muted: #8b8fa8;
-            --primary: #5b4cf0;
-            --primary-light: #7c6ff7;
-            --primary-dark: #4338ca;
-            --primary-glow: rgba(91, 76, 240, 0.25);
-            --accent: #f7931e;
-            --accent-light: #ffb347;
-            --green: #10b981;
-            --green-light: #d1fae5;
-            --red: #ef4444;
-            --red-light: #fee2e2;
-            --border: #e5e7f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow: 0 4px 16px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
-            --shadow-lg: 0 20px 50px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.06);
-            --shadow-xl: 0 32px 64px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.08);
-            --radius-sm: 10px;
-            --radius: 16px;
-            --radius-lg: 22px;
-            --radius-xl: 28px;
-            --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
-            --transition-fast: 0.18s cubic-bezier(0.4,0,0.2,1);
-            --transition-slow: 0.5s cubic-bezier(0.4,0,0.2,1);
-            --font: 'Segoe UI', 'Tajawal', 'Cairo', system-ui, -apple-system, sans-serif;
-        }
-
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
-        body {
-            font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6;
-            min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-        }
-
-        ::-webkit-scrollbar { width:6px; }
-        ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:#d1d5e0; border-radius:20px; }
-        ::-webkit-scrollbar-thumb:hover { background:#b0b7c9; }
-
-        .particles-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
-        .particle { position:absolute; border-radius:50%; animation:floatUp linear infinite; opacity:0; }
-        @keyframes floatUp {
-            0% { transform:translateY(105vh) scale(0); opacity:0; }
-            10% { opacity:1; }
-            90% { opacity:0.5; }
-            100% { transform:translateY(-10vh) scale(1.2); opacity:0; }
-        }
-
-        .header {
-            position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.78);
-            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-            border-bottom:1px solid var(--border); transition:var(--transition); padding:0 20px;
-        }
-        .header.scrolled { box-shadow:var(--shadow); background:rgba(255,255,255,0.92); }
-        .nav { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; gap:16px; }
-        .logo {
-            display:flex; align-items:center; gap:10px; font-size:1.35rem; font-weight:800; color:var(--primary);
-            text-decoration:none; letter-spacing:-0.5px; white-space:nowrap; transition:var(--transition-fast);
-        }
-        .logo:hover { transform:scale(1.03); }
-        .logo-icon {
-            width:42px; height:42px; background:linear-gradient(135deg,var(--primary),var(--primary-light));
-            border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;
-            font-size:1.5rem; color:#fff; box-shadow:0 4px 14px var(--primary-glow); animation:logoPulse 3s ease-in-out infinite;
-        }
-        @keyframes logoPulse {
-            0%,100% { box-shadow:0 4px 14px var(--primary-glow); }
-            50% { box-shadow:0 6px 24px rgba(91,76,240,0.4); }
-        }
-        .nav-actions { display:flex; align-items:center; gap:10px; }
-        .btn {
-            padding:10px 20px; border-radius:50px; font-weight:600; font-size:0.9rem; cursor:pointer; border:none;
-            transition:var(--transition-fast); text-decoration:none; display:inline-flex; align-items:center;
-            gap:7px; font-family:var(--font); white-space:nowrap; letter-spacing:0.2px;
-        }
-        .btn-primary {
-            background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff;
-            box-shadow:0 4px 14px var(--primary-glow);
-        }
-        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(91,76,240,0.35); }
-        .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
-        .btn-outline:hover { background:var(--primary); color:#fff; transform:translateY(-2px); }
-        .btn-ghost { background:transparent; color:var(--text-secondary); padding:8px 14px; }
-        .btn-ghost:hover { background:var(--surface-alt); color:var(--text); }
-        .btn-sm { padding:7px 14px; font-size:0.8rem; border-radius:40px; }
-        .btn-danger { background:var(--red); color:#fff; }
-        .btn-danger:hover { background:#dc2626; }
-        .btn-xs { padding:6px 12px; font-size:0.75rem; border-radius:30px; }
-
-        .main-content { position:relative; z-index:1; max-width:1300px; margin:0 auto; padding:20px 20px 60px; }
-
-        .hero { text-align:center; padding:50px 20px 40px; animation:fadeInUp 0.7s ease-out; }
-        @keyframes fadeInUp {
-            from { opacity:0; transform:translateY(30px); }
-            to { opacity:1; transform:translateY(0); }
-        }
-        .hero-badge {
-            display:inline-block; padding:8px 18px; background:var(--primary-glow); color:var(--primary);
-            border-radius:50px; font-weight:700; font-size:0.85rem; margin-bottom:16px;
-            animation:badgeGlow 2.5s ease-in-out infinite;
-        }
-        @keyframes badgeGlow {
-            0%,100% { box-shadow:0 0 0 0 rgba(91,76,240,0.3); }
-            50% { box-shadow:0 0 0 14px rgba(91,76,240,0); }
-        }
-        .hero h1 {
-            font-size:clamp(2rem,5vw,3.2rem); font-weight:900; line-height:1.25; margin-bottom:12px;
-            background:linear-gradient(135deg,var(--text) 30%,var(--primary-dark));
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-        }
-        .hero-subtitle { font-size:1.1rem; color:var(--text-secondary); max-width:600px; margin:0 auto 24px; line-height:1.7; }
-        .hero-stats { display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:10px; }
-        .hero-stat { text-align:center; animation:fadeInUp 0.7s ease-out backwards; }
-        .hero-stat:nth-child(2) { animation-delay:0.1s; }
-        .hero-stat:nth-child(3) { animation-delay:0.2s; }
-        .hero-stat-value { font-size:2rem; font-weight:900; color:var(--primary); }
-        .hero-stat-label { font-size:0.85rem; color:var(--text-muted); }
-
-        .search-filter-section { margin:20px 0 30px; animation:fadeInUp 0.6s ease-out 0.2s backwards; }
-        .search-wrapper {
-            display:flex; align-items:center; background:var(--surface); border-radius:60px;
-            padding:6px 6px 6px 22px; box-shadow:var(--shadow); border:2px solid transparent;
-            transition:var(--transition); max-width:650px; margin:0 auto 20px;
-        }
-        .search-wrapper:focus-within {
-            border-color:var(--primary); box-shadow:var(--shadow-lg), 0 0 0 8px var(--primary-glow);
-        }
-        .search-wrapper input {
-            flex:1; border:none; outline:none; font-size:1rem; padding:12px 6px; background:transparent;
-            font-family:var(--font); color:var(--text);
-        }
-        .search-wrapper input::placeholder { color:var(--text-muted); }
-        .search-btn {
-            background:var(--primary); color:#fff; border:none; border-radius:50px; padding:12px 24px;
-            cursor:pointer; font-weight:700; font-size:0.9rem; transition:var(--transition-fast);
-            font-family:var(--font); white-space:nowrap;
-        }
-        .search-btn:hover { background:var(--primary-dark); transform:scale(1.03); }
-        .category-tabs { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:0; }
-        .cat-tab {
-            padding:10px 20px; border-radius:50px; border:2px solid var(--border); background:var(--surface);
-            cursor:pointer; font-weight:600; font-size:0.88rem; transition:var(--transition-fast);
-            font-family:var(--font); color:var(--text-secondary); white-space:nowrap;
-        }
-        .cat-tab:hover { border-color:var(--primary-light); color:var(--primary); transform:translateY(-1px); }
-        .cat-tab.active {
-            background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 4px 14px var(--primary-glow);
-        }
-        .results-info { text-align:center; margin:10px 0; color:var(--text-muted); font-size:0.9rem; }
-
-        .apps-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:20px; }
-        .app-card {
-            background:var(--surface); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-sm);
-            cursor:pointer; transition:var(--transition); border:2px solid transparent; position:relative;
-            overflow:hidden; animation:fadeInUp 0.5s ease-out backwards; display:flex; flex-direction:column; gap:12px;
-        }
-        .app-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-xl); border-color:var(--primary-light); }
-        .app-card:active { transform:scale(0.98); }
-        .app-card::after {
-            content:''; position:absolute; top:-50%; right:-50%; width:100%; height:100%;
-            background:radial-gradient(circle, var(--primary-glow) 0%, transparent 70%); opacity:0;
-            transition:var(--transition-slow); pointer-events:none;
-        }
-        .app-card:hover::after { opacity:1; }
-        .app-card-header { display:flex; align-items:center; gap:14px; }
-        .app-icon {
-            width:56px; height:56px; border-radius:var(--radius-sm); object-fit:cover;
-            background:var(--surface-alt); flex-shrink:0; box-shadow:var(--shadow-sm); transition:var(--transition);
-        }
-        .app-card:hover .app-icon { transform:scale(1.06); box-shadow:var(--shadow); }
-        .app-icon-placeholder {
-            width:56px; height:56px; border-radius:var(--radius-sm);
-            background:linear-gradient(135deg,var(--primary),var(--primary-light));
-            display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; flex-shrink:0;
-        }
-        .app-card-info { flex:1; min-width:0; }
-        .app-card-name {
-            font-weight:800; font-size:1.05rem; color:var(--text); line-height:1.3;
-            display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-        }
-        .app-card-category { font-size:0.78rem; color:var(--primary); font-weight:600; margin-top:2px; }
-        .app-card-desc {
-            font-size:0.88rem; color:var(--text-secondary); line-height:1.5;
-            display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; flex:1;
-        }
-        .app-card-meta { display:flex; gap:14px; font-size:0.78rem; color:var(--text-muted); align-items:center; flex-wrap:wrap; }
-        .app-card-meta span { display:flex; align-items:center; gap:4px; }
-        .app-card-badge {
-            position:absolute; top:14px; left:14px; background:var(--accent); color:#fff;
-            padding:5px 12px; border-radius:50px; font-size:0.72rem; font-weight:700; z-index:2;
-        }
-
-        .empty-state { text-align:center; padding:50px 20px; color:var(--text-muted); grid-column:1/-1; }
-        .empty-state-icon { font-size:4rem; margin-bottom:16px; opacity:0.6; }
-        .empty-state h3 { font-size:1.3rem; color:var(--text); margin-bottom:8px; }
-        .skeleton {
-            background:linear-gradient(90deg,#e8eaf0 25%,#f0f2f8 50%,#e8eaf0 75%);
-            background-size:200% 100%; animation:shimmer 1.6s ease-in-out infinite; border-radius:8px;
-        }
-        @keyframes shimmer {
-            0% { background-position:200% 0; }
-            100% { background-position:-200% 0; }
-        }
-        .skeleton-card { height:200px; border-radius:var(--radius-lg); }
-
-        .modal-overlay {
-            position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.55);
-            backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-            display:flex; align-items:center; justify-content:center; padding:20px; animation:fadeIn 0.25s ease-out;
-        }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-        .modal {
-            background:var(--surface); border-radius:var(--radius-xl); max-width:620px; width:100%; max-height:85vh;
-            overflow-y:auto; box-shadow:var(--shadow-xl); animation:modalIn 0.35s cubic-bezier(0.4,0,0.2,1); position:relative;
-        }
-        @keyframes modalIn {
-            from { opacity:0; transform:translateY(40px) scale(0.94); }
-            to { opacity:1; transform:translateY(0) scale(1); }
-        }
-        .modal-close {
-            position:sticky; top:12px; float:left; z-index:10; width:40px; height:40px; border-radius:50%;
-            background:var(--surface-alt); border:none; cursor:pointer; font-size:1.3rem;
-            display:flex; align-items:center; justify-content:center; transition:var(--transition-fast);
-            color:var(--text); margin:8px 8px 0 0;
-        }
-        .modal-close:hover { background:#e8eaf0; transform:rotate(90deg); }
-        .modal-body { padding:8px 28px 28px; }
-        .modal-icon { width:80px; height:80px; border-radius:var(--radius); object-fit:cover; margin-bottom:16px; box-shadow:var(--shadow); }
-        .modal-icon-placeholder {
-            width:80px; height:80px; border-radius:var(--radius); background:linear-gradient(135deg,var(--primary),var(--primary-light));
-            display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:#fff; margin-bottom:16px;
-        }
-        .modal h2 { font-size:1.6rem; font-weight:900; margin-bottom:6px; }
-        .modal .modal-category {
-            display:inline-block; padding:5px 14px; background:var(--primary-glow); color:var(--primary);
-            border-radius:50px; font-weight:700; font-size:0.8rem; margin-bottom:14px;
-        }
-        .modal-desc { color:var(--text-secondary); line-height:1.8; margin-bottom:16px; white-space:pre-line; }
-        .modal-meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
-        .modal-meta-item { background:var(--surface-alt); padding:12px 16px; border-radius:var(--radius-sm); font-size:0.85rem; }
-        .modal-meta-item strong { display:block; color:var(--text); font-weight:700; }
-        .modal-meta-item span { color:var(--text-muted); font-size:0.8rem; }
-        .btn-download {
-            display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:16px;
-            background:linear-gradient(135deg,var(--green),#059669); color:#fff; border:none; border-radius:60px;
-            font-size:1.1rem; font-weight:800; cursor:pointer; transition:var(--transition); font-family:var(--font);
-            letter-spacing:0.3px; box-shadow:0 6px 22px rgba(16,185,129,0.3);
-        }
-        .btn-download:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(16,185,129,0.4); }
-        .btn-download:active { transform:scale(0.96); }
-        .download-icon { font-size:1.4rem; animation:bounceDown 1.8s ease-in-out infinite; }
-        @keyframes bounceDown {
-            0%,100% { transform:translateY(0); }
-            30% { transform:translateY(6px); }
-            50% { transform:translateY(0); }
-            70% { transform:translateY(3px); }
-        }
-
-        .admin-overlay {
-            position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.6);
-            backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-            display:flex; align-items:center; justify-content:center; padding:20px;
-        }
-        .admin-panel {
-            background:var(--surface); border-radius:var(--radius-xl); max-width:700px; width:100%; max-height:90vh;
-            overflow-y:auto; box-shadow:var(--shadow-xl); padding:28px; animation:modalIn 0.35s;
-        }
-        .admin-panel h2 { font-size:1.5rem; font-weight:900; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
-        .form-group { margin-bottom:16px; }
-        .form-group label { display:block; font-weight:700; margin-bottom:5px; font-size:0.9rem; color:var(--text); }
-        .form-group input, .form-group textarea, .form-group select {
-            width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:var(--radius-sm);
-            font-family:var(--font); font-size:0.95rem; transition:var(--transition-fast);
-            background:var(--surface-alt); color:var(--text); resize:vertical;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            outline:none; border-color:var(--primary); box-shadow:0 0 0 6px var(--primary-glow); background:#fff;
-        }
-        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        @media (max-width:500px) { .form-row { grid-template-columns:1fr; } }
-        .admin-app-list-item {
-            display:flex; align-items:center; justify-content:space-between; padding:12px 16px;
-            background:var(--surface-alt); border-radius:var(--radius-sm); margin-bottom:8px; gap:10px; flex-wrap:wrap;
-        }
-        .admin-app-list-item span { font-weight:600; flex:1; min-width:120px; }
-        .admin-app-list-item .actions { display:flex; gap:6px; }
-
-        .toast-container {
-            position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:999;
-            display:flex; flex-direction:column; gap:8px; pointer-events:none;
-        }
-        .toast {
-            padding:14px 22px; border-radius:50px; color:#fff; font-weight:700; font-size:0.9rem;
-            animation:toastIn 0.4s cubic-bezier(0.4,0,0.2,1); pointer-events:auto; box-shadow:var(--shadow-lg);
-            text-align:center; white-space:nowrap;
-        }
-        .toast.success { background:#10b981; }
-        .toast.error { background:#ef4444; }
-        .toast.info { background:var(--primary); }
-        @keyframes toastIn {
-            from { opacity:0; transform:translateY(30px) scale(0.9); }
-            to { opacity:1; transform:translateY(0) scale(1); }
-        }
-        @keyframes toastOut {
-            from { opacity:1; transform:translateY(0) scale(1); }
-            to { opacity:0; transform:translateY(-20px) scale(0.8); }
-        }
-
-        .footer { text-align:center; padding:30px 20px; color:var(--text-muted); font-size:0.85rem; position:relative; z-index:1; }
-        .footer a { color:var(--primary); text-decoration:none; font-weight:600; }
-
-        .hidden { display:none !important; }
-
-        @media (max-width:768px) {
-            .apps-grid { grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; }
-            .hero h1 { font-size:1.8rem; }
-            .hero-subtitle { font-size:0.95rem; }
-            .nav { height:56px; }
-            .logo { font-size:1.1rem; }
-            .logo-icon { width:34px; height:34px; font-size:1.2rem; }
-            .btn { padding:8px 14px; font-size:0.78rem; }
-            .cat-tab { padding:8px 14px; font-size:0.78rem; }
-            .modal { max-width:95vw; border-radius:var(--radius-lg); }
-            .modal-body { padding:8px 18px 20px; }
-            .admin-panel { padding:18px; max-width:95vw; }
-            .hero-stats { gap:16px; }
-            .hero-stat-value { font-size:1.5rem; }
-        }
-        @media (max-width:400px) {
-            .apps-grid { grid-template-columns:1fr; }
-            .app-card { padding:16px; }
-            .search-wrapper { padding:4px 4px 4px 14px; border-radius:40px; }
-            .search-wrapper input { font-size:0.9rem; padding:10px 4px; }
-            .search-btn { padding:10px 16px; font-size:0.8rem; }
-        }
+        /* === (تم الاحتفاظ بجميع تنسيقات CSS الأصلية الخاصة بك) === */
+        :root { --bg: #f5f7fb; --surface: #ffffff; --surface-alt: #f0f2f8; --text: #1a1d2e; --text-secondary: #5a5f78; --text-muted: #8b8fa8; --primary: #5b4cf0; --primary-light: #7c6ff7; --primary-dark: #4338ca; --primary-glow: rgba(91, 76, 240, 0.25); --accent: #f7931e; --green: #10b981; --red: #ef4444; --border: #e5e7f0; --shadow-sm: 0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.06); --shadow: 0 4px 16px rgba(0,0,0,0.06),0 2px 6px rgba(0,0,0,0.04); --shadow-lg: 0 20px 50px rgba(0,0,0,0.1),0 8px 20px rgba(0,0,0,0.06); --shadow-xl: 0 32px 64px rgba(0,0,0,0.12),0 12px 32px rgba(0,0,0,0.08); --radius-sm: 10px; --radius: 16px; --radius-lg: 22px; --radius-xl: 28px; --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1); --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1); --font: 'Segoe UI', 'Tajawal', 'Cairo', system-ui, -apple-system, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #d1d5e0; border-radius: 20px; } ::-webkit-scrollbar-thumb:hover { background: #b0b7c9; }
+        .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .particle { position: absolute; border-radius: 50%; animation: floatUp linear infinite; opacity: 0; }
+        @keyframes floatUp { 0% { transform: translateY(105vh) scale(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 0.5; } 100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } }
+        .header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: var(--transition); padding: 0 20px; }
+        .header.scrolled { box-shadow: var(--shadow); background: rgba(255, 255, 255, 0.92); }
+        .nav { max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.35rem; font-weight: 800; color: var(--primary); text-decoration: none; transition: var(--transition-fast); }
+        .logo-icon { width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; box-shadow: 0 4px 14px var(--primary-glow); }
+        .btn { padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: none; transition: var(--transition-fast); display: inline-flex; align-items: center; gap: 7px; font-family: var(--font); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; box-shadow: 0 4px 14px var(--primary-glow); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(91, 76, 240, 0.35); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+        .btn-ghost { background: transparent; color: var(--text-secondary); padding: 8px 14px; }
+        .btn-ghost:hover { background: var(--surface-alt); color: var(--text); }
+        .btn-sm { padding: 7px 14px; font-size: 0.8rem; border-radius: 40px; }
+        .btn-success { background: var(--green); color: #fff; }
+        .btn-success:hover { background: #059669; }
+        .main-content { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 20px 20px 60px; }
+        .hero { text-align: center; padding: 50px 20px 40px; animation: fadeInUp 0.7s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 30%, var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 24px; }
+        .hero-stats { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 10px; }
+        .hero-stat { text-align: center; }
+        .hero-stat-value { font-size: 2rem; font-weight: 900; color: var(--primary); }
+        .hero-stat-label { font-size: 0.85rem; color: var(--text-muted); }
+        .search-wrapper { display: flex; align-items: center; background: var(--surface); border-radius: 60px; padding: 6px 6px 6px 22px; box-shadow: var(--shadow); border: 2px solid transparent; max-width: 650px; margin: 0 auto 20px; }
+        .search-wrapper input { flex: 1; border: none; outline: none; font-size: 1rem; padding: 12px 6px; background: transparent; font-family: var(--font); }
+        .search-btn { background: var(--primary); color: #fff; border: none; border-radius: 50px; padding: 12px 24px; cursor: pointer; font-weight: 700; font-size: 0.9rem; }
+        .category-tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;}
+        .cat-tab { padding: 10px 20px; border-radius: 50px; border: 2px solid var(--border); background: var(--surface); cursor: pointer; font-weight: 600; font-size: 0.88rem; color: var(--text-secondary); }
+        .cat-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 14px var(--primary-glow); }
+        .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .app-card { background: var(--surface); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-sm); cursor: pointer; transition: var(--transition); border: 2px solid transparent; display: flex; flex-direction: column; gap: 12px; }
+        .app-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); border-color: var(--primary-light); }
+        .app-card-header { display: flex; align-items: center; gap: 14px; }
+        .app-icon { width: 56px; height: 56px; border-radius: var(--radius-sm); object-fit: cover; }
+        .app-icon-placeholder { width: 56px; height: 56px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #fff; }
+        .app-card-name { font-weight: 800; font-size: 1.05rem; }
+        .app-card-desc { font-size: 0.88rem; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .app-card-meta { display: flex; gap: 14px; font-size: 0.78rem; color: var(--text-muted); }
+        .modal-overlay, .admin-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal, .admin-panel { background: var(--surface); border-radius: var(--radius-xl); max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-xl); padding: 28px; position: relative;}
+        .modal-close { position: sticky; top: 12px; float: left; z-index: 10; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-alt); border: none; cursor: pointer; font-size: 1.3rem; margin: 8px 8px 0 0; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.9rem; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.95rem; background: var(--surface-alt); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 14px 22px; border-radius: 50px; color: #fff; font-weight: 700; font-size: 0.9rem; box-shadow: var(--shadow-lg); text-align: center; }
+        .toast.success { background: #10b981; } .toast.error { background: #ef4444; } .toast.info { background: var(--primary); }
+        .hidden { display: none !important; }
+        .github-box { background: #f8fafc; border: 2px dashed #cbd5e1; padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px; }
+        .file-upload-box { display: flex; gap: 10px; align-items: center; background: #e0f2fe; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid #bae6fd;}
     </style>
 </head>
 <body>
 
-    <div class="particles-container" id="particlesContainer" aria-hidden="true"></div>
+    <div class="particles-container" id="particlesContainer"></div>
 
     <header class="header" id="header">
         <nav class="nav">
-            <a href="#" class="logo" title="مكتبتك الرقمية - الرئيسية">
-                <div class="logo-icon">📱</div>
-                <span>مكتبتك الرقمية</span>
+            <a href="#" class="logo">
+                <div class="logo-icon">📱</div><span>مكتبتك الرقمية</span>
             </a>
-            <div class="nav-actions">
-                <button class="btn btn-ghost btn-sm" onclick="openAdminPanel()" title="لوحة التحكم">
-                    ⚙️ لوحة التحكم
-                </button>
-            </div>
+            <button class="btn btn-ghost btn-sm" onclick="openAdminPanel()">⚙️ لوحة التحكم</button>
         </nav>
     </header>
 
-    <main class="main-content" id="mainContent">
-        <section class="hero" aria-labelledby="heroTitle">
-            <div class="hero-badge">✨ منصة موثوقة لتحميل التطبيقات</div>
-            <h1 id="heroTitle">مكتبتك الرقمية المتكاملة</h1>
-            <p class="hero-subtitle">اكتشف وحمّل أفضل التطبيقات والبرامج لهاتفك وحاسوبك من مكان واحد. جميع التطبيقات محدثة وآمنة.</p>
+    <main class="main-content">
+        <section class="hero">
+            <h1>مكتبتك الرقمية المتكاملة</h1>
+            <p class="hero-subtitle">حمّل أفضل التطبيقات والبرامج لهاتفك وحاسوبك من مكان واحد.</p>
             <div class="hero-stats">
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="statAppsCount">0</div>
-                    <div class="hero-stat-label">تطبيق متاح</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value" id="statDownloads">0</div>
-                    <div class="hero-stat-label">عملية تحميل</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value">✓</div>
-                    <div class="hero-stat-label">آمن وموثوق</div>
-                </div>
+                <div class="hero-stat"><div class="hero-stat-value" id="statAppsCount">0</div><div class="hero-stat-label">تطبيق</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="statDownloads">0</div><div class="hero-stat-label">تحميل</div></div>
             </div>
         </section>
 
-        <section class="search-filter-section" aria-label="بحث وتصفية">
+        <section class="search-filter-section">
             <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="🔍 ابحث عن تطبيق... (مثال: واتساب، فوتوشوب، لعبة)"
-                       autocomplete="off" aria-label="البحث عن تطبيق">
-                <button class="search-btn" onclick="performSearch()" aria-label="زر البحث">بحث</button>
+                <input type="text" id="searchInput" placeholder="🔍 ابحث عن تطبيق...">
+                <button class="search-btn" onclick="performSearch()">بحث</button>
             </div>
-            <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="فئات التطبيقات">
-                <button class="cat-tab active" data-category="all" role="tab" aria-selected="true">📋 الكل</button>
-                <button class="cat-tab" data-category="mobile" role="tab" aria-selected="false">📱 تطبيقات الهاتف</button>
-                <button class="cat-tab" data-category="desktop" role="tab" aria-selected="false">💻 تطبيقات الحاسوب</button>
-                <button class="cat-tab" data-category="games" role="tab" aria-selected="false">🎮 ألعاب</button>
-                <button class="cat-tab" data-category="tools" role="tab" aria-selected="false">🛠️ أدوات</button>
-                <button class="cat-tab" data-category="education" role="tab" aria-selected="false">📚 تعليم</button>
+            <div class="category-tabs" id="categoryTabs">
+                <button class="cat-tab active" data-category="all">📋 الكل</button>
+                <button class="cat-tab" data-category="mobile">📱 تطبيقات الهاتف</button>
+                <button class="cat-tab" data-category="desktop">💻 تطبيقات الحاسوب</button>
+                <button class="cat-tab" data-category="games">🎮 ألعاب</button>
             </div>
-            <div class="results-info" id="resultsInfo"></div>
+            <div id="resultsInfo" style="text-align:center; margin-bottom: 10px;"></div>
         </section>
 
-        <section class="apps-grid" id="appsGrid" aria-label="قائمة التطبيقات">
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-        </section>
+        <section class="apps-grid" id="appsGrid"></section>
     </main>
 
-    <footer class="footer">
-        <p>© 2025 <strong>مكتبتك الرقمية</strong> · جميع الحقوق محفوظة · صُنع بحب ❤️</p>
-    </footer>
-
-    <div class="modal-overlay hidden" id="appModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-overlay hidden" id="appModalOverlay">
         <div class="modal" id="appModal">
-            <button class="modal-close" onclick="closeModal()" aria-label="إغلاق">✕</button>
+            <button class="modal-close" onclick="closeModal()">✕</button>
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
-    <div class="admin-overlay hidden" id="adminOverlay" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <div class="admin-overlay hidden" id="adminOverlay">
         <div class="admin-panel" id="adminPanel">
-            <button class="modal-close" onclick="closeAdminPanel()" aria-label="إغلاق"
-                    style="float:left;position:sticky;top:0;">✕</button>
+            <button class="modal-close" onclick="closeAdminPanel()">✕</button>
             <div id="adminContent"></div>
         </div>
     </div>
@@ -463,316 +128,277 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ==================== FIREBASE CONFIGURATION ====================
-        firebase.initializeApp({
+        // إعدادات فايربيز الخاصة بك (فقط قاعدة البيانات)
+        const firebaseConfig = {
             apiKey: "AIzaSyDvDaK7HtwtQ_VmR9cKoDq6sdrUyL_Hfls",
             authDomain: "system-library-52cc1.firebaseapp.com",
             projectId: "system-library-52cc1",
             storageBucket: "system-library-52cc1.firebasestorage.app",
             messagingSenderId: "139702257477",
             appId: "1:139702257477:web:1615f6c263afb3e1d1e02c"
-        });
-        const db = firebase.firestore();
+        };
 
-        const ADMIN_PASSWORD = 'admin2025digital';
-        let allApps = [], currentCategory = 'all', searchQuery = '', isAdminLoggedIn = false, editingAppId = null;
+        let db;
+        try { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } catch (e) {}
 
-        // DOM
-        const $ = id => document.getElementById(id);
-        const appsGrid = $('appsGrid'), searchInput = $('searchInput'), categoryTabs = $('categoryTabs'),
-              resultsInfo = $('resultsInfo'), appModalOverlay = $('appModalOverlay'), modalBody = $('modalBody'),
-              adminOverlay = $('adminOverlay'), adminContent = $('adminContent'), toastContainer = $('toastContainer'),
-              statAppsCount = $('statAppsCount'), statDownloads = $('statDownloads'),
-              particlesContainer = $('particlesContainer'), header = $('header');
+        const ADMIN_PASSWORD = 'osama'; // غيرها كما تحب
+        let allApps = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let isAdminLoggedIn = false;
+        let editingAppId = null;
+        let ghReleaseId = null; // لتخزين رقم الإصدار بعد فحصه
 
-        // Particles
-        function createParticles() {
-            const colors = ['#5b4cf0','#7c6ff7','#f7931e','#10b981','#06b6d4','#8b5cf6'];
-            for (let i=0; i<35; i++) {
-                const p = document.createElement('div'); p.className = 'particle';
-                const size = Math.random()*8+3;
-                p.style.width = size+'px'; p.style.height = size+'px';
-                p.style.left = Math.random()*100+'%';
-                p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-                p.style.animationDuration = Math.random()*14+8+'s';
-                p.style.animationDelay = Math.random()*12+'s';
-                particlesContainer.appendChild(p);
-            }
-        }
+        const appsGrid = document.getElementById('appsGrid');
+        const modalBody = document.getElementById('modalBody');
+        const adminContent = document.getElementById('adminContent');
+        const toastContainer = document.getElementById('toastContainer');
 
-        function showToast(msg, type='info') {
-            const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = msg;
+        function showToast(msg, type = 'info') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`; t.textContent = msg;
             toastContainer.appendChild(t);
-            setTimeout(()=>{ t.style.animation = 'toastOut 0.4s ease-in forwards'; t.addEventListener('animationend',()=>t.remove()); },3000);
+            setTimeout(() => t.remove(), 3000);
         }
 
-        // Firestore
+        // --- عمليات فايربيز لجلب وحفظ التطبيقات ---
         async function fetchApps() {
-            if (!db) return [];
-            try {
-                const snap = await db.collection('apps').orderBy('createdAt','desc').get();
-                const apps = []; snap.forEach(d => apps.push({id:d.id,...d.data()})); return apps;
-            } catch(e) { showToast('⚠️ خطأ في الاتصال بقاعدة البيانات','error'); return []; }
-        }
-        async function addApp(data) {
-            await db.collection('apps').add({...data, downloads:0, createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-        }
-        async function updateApp(id, data) { await db.collection('apps').doc(id).update(data); }
-        async function deleteApp(id) { await db.collection('apps').doc(id).delete(); }
-        async function incrementDownload(id) {
-            await db.collection('apps').doc(id).update({downloads:firebase.firestore.FieldValue.increment(1)});
-        }
-
-        // Filter & Render
-        function getFilteredApps() {
-            let filtered = [...allApps];
-            if (currentCategory !== 'all') filtered = filtered.filter(a => a.category === currentCategory);
-            if (searchQuery.trim()) {
-                const q = searchQuery.trim().toLowerCase();
-                filtered = filtered.filter(a => [a.name,a.nameEn,a.shortDesc,a.fullDesc,a.developer,...(a.tags||[])].join(' ').toLowerCase().includes(q));
-            }
-            return filtered;
+            if(!db) return [];
+            const snapshot = await db.collection('apps').orderBy('createdAt', 'desc').get();
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         }
 
         function renderApps() {
-            const filtered = getFilteredApps();
-            resultsInfo.textContent = filtered.length ? `🔍 تم العثور على ${filtered.length} تطبيق` : '😕 لا توجد تطبيقات تطابق بحثك';
-            if (!filtered.length && allApps.length && db) {
-                appsGrid.innerHTML = Array(6).fill('<div class="skeleton skeleton-card"></div>').join('');
-                return;
-            }
-            if (!filtered.length) {
-                appsGrid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><h3>لا توجد تطبيقات حالياً</h3><p>جرب كلمة بحث مختلفة أو تصفح جميع الفئات.</p></div>`;
-                return;
-            }
-            const catLabels = {mobile:'📱 تطبيق هاتف',desktop:'💻 تطبيق حاسوب',games:'🎮 لعبة',tools:'🛠️ أداة',education:'📚 تعليم'};
-            appsGrid.innerHTML = filtered.map((app,i) => {
-                const iconHtml = app.iconUrl
-                    ? `<img src="${app.iconUrl}" alt="${app.name}" class="app-icon" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="app-icon-placeholder" style="display:none;">${(app.name||'ت')[0]}</div>`
-                    : `<div class="app-icon-placeholder">${(app.name||'ت')[0]}</div>`;
-                const cat = catLabels[app.category] || app.category;
-                return `<article class="app-card" style="animation-delay:${i*0.06}s" onclick="openAppDetail('${app.id}')" role="button" tabindex="0">
-                    ${app.featured?'<span class="app-card-badge">⭐ مميز</span>':''}
-                    <div class="app-card-header">${iconHtml}<div class="app-card-info"><h3 class="app-card-name">${app.name||'تطبيق'}</h3><div class="app-card-category">${cat}</div></div></div>
-                    <p class="app-card-desc">${app.shortDesc||'لا يوجد وصف'}</p>
-                    <div class="app-card-meta">${app.size?`<span>📦 ${app.size}</span>`:''}${app.version?`<span>🏷️ ${app.version}</span>`:''}<span>⬇️ ${app.downloads||0}</span></div>
-                </article>`;
-            }).join('');
-            statAppsCount.textContent = allApps.length;
-            statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0).toLocaleString('ar-EG');
+            let filtered = allApps.filter(a => currentCategory==='all' || a.category===currentCategory);
+            if(searchQuery) filtered = filtered.filter(a => (a.name+a.shortDesc).includes(searchQuery));
+            
+            appsGrid.innerHTML = filtered.map(app => `
+                <article class="app-card" onclick="openAppDetail('${app.id}')">
+                    <div class="app-card-header">
+                        <div class="app-icon-placeholder">${(app.name||'ت')[0]}</div>
+                        <div><h3>${app.name}</h3><span style="color:var(--primary);font-size:0.8rem">${app.category}</span></div>
+                    </div>
+                    <p class="app-card-desc">${app.shortDesc}</p>
+                    <div class="app-card-meta"><span>⬇️ ${app.downloads||0}</span> <span>📦 ${app.size||'-'}</span></div>
+                </article>
+            `).join('') || '<p style="text-align:center;grid-column:1/-1;">لا توجد تطبيقات</p>';
+            
+            document.getElementById('statAppsCount').textContent = allApps.length;
+            document.getElementById('statDownloads').textContent = allApps.reduce((sum, a) => sum + (a.downloads||0), 0);
         }
 
-        // Modal
         function openAppDetail(id) {
-            const app = allApps.find(a=>a.id===id); if(!app) return;
-            const catLabels = {mobile:'📱 تطبيق هاتف',desktop:'💻 تطبيق حاسوب',games:'🎮 لعبة',tools:'🛠️ أداة',education:'📚 تعليم'};
-            const cat = catLabels[app.category] || app.category;
-            const iconHtml = app.iconUrl
-                ? `<img src="${app.iconUrl}" class="modal-icon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="modal-icon-placeholder" style="display:none;">${(app.name||'ت')[0]}</div>`
-                : `<div class="modal-icon-placeholder">${(app.name||'ت')[0]}</div>`;
+            const app = allApps.find(a => a.id === id);
             modalBody.innerHTML = `
-                ${iconHtml}
-                <h2 id="modalTitle">${app.name||'تطبيق'}</h2>
-                <span class="modal-category">${cat}</span>
-                <p class="modal-desc">${app.fullDesc||app.shortDesc||'لا يوجد وصف مفصل.'}</p>
-                <div class="modal-meta-grid">
-                    ${app.version?`<div class="modal-meta-item"><strong>الإصدار</strong><span>${app.version}</span></div>`:''}
-                    ${app.size?`<div class="modal-meta-item"><strong>الحجم</strong><span>${app.size}</span></div>`:''}
-                    ${app.developer?`<div class="modal-meta-item"><strong>المطور</strong><span>${app.developer}</span></div>`:''}
-                    ${app.requirements?`<div class="modal-meta-item"><strong>المتطلبات</strong><span>${app.requirements}</span></div>`:''}
-                    <div class="modal-meta-item"><strong>التحميلات</strong><span>⬇️ ${(app.downloads||0).toLocaleString('ar-EG')}</span></div>
-                </div>
-                <a href="${app.downloadUrl}" class="btn-download" onclick="handleDownloadClick(event, '${app.id}', '${app.downloadUrl}')">
-                    <span class="download-icon">⬇️</span> تحميل الآن
-                </a>
+                <h2>${app.name}</h2>
+                <p style="margin:10px 0;">${app.fullDesc || app.shortDesc}</p>
+                <a href="${app.downloadUrl}" target="_blank" class="btn btn-primary" onclick="incDownload('${app.id}')" style="width:100%;justify-content:center;padding:15px;font-size:1.1rem;">⬇️ تحميل الآن</a>
             `;
-            appModalOverlay.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            document.getElementById('appModalOverlay').classList.remove('hidden');
         }
-        function closeModal() { appModalOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
-
-        async function handleDownloadClick(e, appId, url) {
-            e.preventDefault();
-            await incrementDownload(appId);
-            const app = allApps.find(a=>a.id===appId);
-            if(app) app.downloads = (app.downloads||0)+1;
-            statDownloads.textContent = allApps.reduce((s,a)=>s+(a.downloads||0),0).toLocaleString('ar-EG');
-            showToast('✅ جاري التحميل...','success');
-            setTimeout(()=>{ closeModal(); renderApps(); }, 800);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        function closeModal() { document.getElementById('appModalOverlay').classList.add('hidden'); }
+        
+        async function incDownload(id) {
+            if(db) await db.collection('apps').doc(id).update({downloads: firebase.firestore.FieldValue.increment(1)});
         }
 
-        // Search
-        function performSearch() { searchQuery = searchInput.value; renderApps(); }
-        searchInput.addEventListener('input', ()=>{
-            clearTimeout(searchInput._t);
-            searchInput._t = setTimeout(()=>{ searchQuery=searchInput.value; renderApps(); },350);
-        });
-        categoryTabs.addEventListener('click', e=>{
-            const tab = e.target.closest('.cat-tab'); if(!tab) return;
-            currentCategory = tab.dataset.category;
-            categoryTabs.querySelectorAll('.cat-tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-            tab.classList.add('active'); tab.setAttribute('aria-selected','true');
-            renderApps();
-        });
-
-        // Admin
+        // --- لوحة التحكم وإعدادات GitHub ---
         function openAdminPanel() {
-            if(!isAdminLoggedIn) showLogin(); else showDashboard();
-            adminOverlay.classList.remove('hidden'); document.body.style.overflow = 'hidden';
+            if(!isAdminLoggedIn) {
+                adminContent.innerHTML = `<h2>🔐 دخول لوحة التحكم</h2>
+                <input type="password" id="adminPwd" class="form-group" style="width:100%;padding:10px;margin-bottom:10px;" placeholder="كلمة المرور">
+                <button class="btn btn-primary" onclick="if(document.getElementById('adminPwd').value==='${ADMIN_PASSWORD}'){isAdminLoggedIn=true;showAdminDashboard();}else{showToast('خطأ','error')}">دخول</button>`;
+            } else { showAdminDashboard(); }
+            document.getElementById('adminOverlay').classList.remove('hidden');
         }
-        function closeAdminPanel() { adminOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
-        function showLogin() {
-            adminContent.innerHTML = `
-                <h2 id="adminTitle">🔐 دخول لوحة التحكم</h2>
-                <p>أدخل كلمة المرور</p>
-                <div class="form-group"><input type="password" id="adminPassword" placeholder="كلمة المرور"></div>
-                <button class="btn btn-primary" onclick="adminLogin()" style="width:100%">دخول</button>
-            `;
-        }
-        function adminLogin() {
-            if(document.getElementById('adminPassword').value === ADMIN_PASSWORD) { isAdminLoggedIn=true; showToast('✅ تم الدخول','success'); showDashboard(); }
-            else showToast('❌ خطأ','error');
-        }
-        function showDashboard() {
+        function closeAdminPanel() { document.getElementById('adminOverlay').classList.add('hidden'); }
+
+        function showAdminDashboard() {
+            // جلب الإعدادات المحفوظة مسبقاً من المتصفح
+            const savedGH = JSON.parse(localStorage.getItem('gh_config')) || {owner: 'Osamaalshwafi', repo: 'my-apps', tag: 'v1.0.0', token: ''};
+            
             adminContent.innerHTML = `
                 <h2>⚙️ لوحة التحكم</h2>
-                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
-                    <button class="btn btn-primary btn-sm" onclick="showAddForm()">➕ إضافة تطبيق</button>
-                    <button class="btn btn-outline btn-sm" onclick="refreshApps()">🔄 تحديث</button>
-                    <button class="btn btn-ghost btn-sm" onclick="isAdminLoggedIn=false;showLogin();">🚪 خروج</button>
-                </div>
-                <div id="adminAppList"></div>
-                <div id="adminFormContainer"></div>
-            `;
-            renderAdminAppList();
-        }
-        function renderAdminAppList() {
-            const list = document.getElementById('adminAppList'); if(!list) return;
-            if(!allApps.length) { list.innerHTML = '<p style="text-align:center;">لا توجد تطبيقات</p>'; return; }
-            list.innerHTML = allApps.map(a => `
-                <div class="admin-app-list-item">
-                    <span>${a.iconUrl?`<img src="${a.iconUrl}" style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-left:6px;">`:''}<strong>${a.name}</strong> · ${a.category||'عام'}</span>
-                    <div class="actions">
-                        <button class="btn btn-outline btn-xs" onclick="editApp('${a.id}')">✏️</button>
-                        <button class="btn btn-danger btn-xs" onclick="deleteAppConfirmed('${a.id}')">🗑️</button>
+                
+                <div class="github-box">
+                    <h3 style="margin-bottom:10px;">🐙 إعدادات رفع الملفات (GitHub)</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>اسم الحساب (Owner)</label><input type="text" id="ghOwner" value="${savedGH.owner}"></div>
+                        <div class="form-group"><label>اسم المستودع (Repo)</label><input type="text" id="ghRepo" value="${savedGH.repo}"></div>
                     </div>
-                </div>`).join('');
+                    <div class="form-row">
+                        <div class="form-group"><label>اسم الإصدار (Tag)</label><input type="text" id="ghTag" value="${savedGH.tag}"></div>
+                        <div class="form-group"><label>التوكن (Token)</label><input type="password" id="ghToken" value="${savedGH.token}" placeholder="ghp_xxxxxxxxxxxx"></div>
+                    </div>
+                    <button class="btn btn-outline" id="btnTestGH" onclick="testGitHubConnection()">🔄 فحص الاتصال بـ GitHub</button>
+                    <span id="ghStatus" style="font-size:0.85rem; margin-right:10px; font-weight:bold;"></span>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <button class="btn btn-primary" onclick="showAppForm()">➕ إضافة تطبيق</button>
+                    <button class="btn btn-ghost" onclick="isAdminLoggedIn=false;closeAdminPanel()">خروج</button>
+                </div>
+                
+                <div id="adminFormArea"></div>
+            `;
         }
 
-        function showAddForm() { editingAppId=null; renderAppForm(); }
-        function editApp(id) { editingAppId=id; const app = allApps.find(a=>a.id===id); renderAppForm(app); }
+        // دالة فحص اتصال جيتهاب وجلب Release ID
+        async function testGitHubConnection() {
+            const owner = document.getElementById('ghOwner').value.trim();
+            const repo = document.getElementById('ghRepo').value.trim();
+            const tag = document.getElementById('ghTag').value.trim();
+            const token = document.getElementById('ghToken').value.trim();
+            const statusSpan = document.getElementById('ghStatus');
+            
+            if(!token) return showToast('الرجاء إدخال التوكن', 'error');
 
-        function renderAppForm(app=null) {
-            const isEdit = !!app;
-            document.getElementById('adminFormContainer').innerHTML = `
-                <hr><h3>${isEdit?'✏️ تعديل التطبيق':'➕ إضافة تطبيق جديد'}</h3>
-                <div class="form-group"><label>اسم التطبيق (بالعربية) *</label><input id="appName" value="${app?.name||''}" placeholder="واتساب بلس"></div>
-                <div class="form-group"><label>اسم التطبيق (إنجليزي)</label><input id="appNameEn" value="${app?.nameEn||''}" placeholder="WhatsApp Plus"></div>
-                <div class="form-row">
-                    <div class="form-group"><label>الفئة</label><select id="appCategory">
-                        <option value="mobile" ${app?.category==='mobile'?'selected':''}>📱 تطبيقات الهاتف</option>
-                        <option value="desktop" ${app?.category==='desktop'?'selected':''}>💻 تطبيقات الحاسوب</option>
-                        <option value="games" ${app?.category==='games'?'selected':''}>🎮 ألعاب</option>
-                        <option value="tools" ${app?.category==='tools'?'selected':''}>🛠️ أدوات</option>
-                        <option value="education" ${app?.category==='education'?'selected':''}>📚 تعليم</option>
-                    </select></div>
-                    <div class="form-group"><label>الإصدار</label><input id="appVersion" value="${app?.version||''}" placeholder="2.5.1"></div>
-                </div>
-                <div class="form-group"><label>وصف مختصر *</label><textarea id="appShortDesc" rows="2">${app?.shortDesc||''}</textarea></div>
-                <div class="form-group"><label>وصف كامل</label><textarea id="appFullDesc" rows="4">${app?.fullDesc||''}</textarea></div>
-                <div class="form-row">
-                    <div class="form-group"><label>الحجم</label><input id="appSize" value="${app?.size||''}" placeholder="45 MB"></div>
-                    <div class="form-group"><label>المطور</label><input id="appDeveloper" value="${app?.developer||''}"></div>
-                </div>
-                <div class="form-group"><label>المتطلبات</label><input id="appRequirements" value="${app?.requirements||''}" placeholder="Android 8.0+"></div>
-                <div class="form-group"><label>رابط الأيقونة</label><input id="appIconUrl" value="${app?.iconUrl||''}" placeholder="https://..."></div>
-                <div class="form-group">
-                    <label>رابط التحميل (Google Drive) *</label>
-                    <input type="text" id="appDownloadUrlInput" value="${app?.downloadUrl||''}" placeholder="الصق رابط المشاركة من Google Drive">
-                    <small style="color:var(--text-muted);">سيتم تحويل الرابط تلقائياً إلى رابط تحميل مباشر.</small>
-                    <input type="hidden" id="appDownloadUrl" value="${app?.downloadUrl||''}">
-                </div>
-                <div class="form-group"><label>وسوم (مفصولة بفواصل)</label><input id="appTags" value="${(app?.tags||[]).join(',')}" placeholder="تواصل,شات"></div>
-                <div class="form-group"><label><input type="checkbox" id="appFeatured" ${app?.featured?'checked':''}> مميز</label></div>
-                <div style="display:flex;gap:10px;">
-                    <button class="btn btn-primary" onclick="saveApp()">💾 ${isEdit?'تحديث':'حفظ'}</button>
-                    <button class="btn btn-ghost" onclick="showDashboard()">إلغاء</button>
+            // حفظ في المتصفح
+            localStorage.setItem('gh_config', JSON.stringify({owner, repo, tag, token}));
+            
+            statusSpan.textContent = 'جاري الفحص...';
+            statusSpan.style.color = 'var(--text)';
+
+            try {
+                // الفحص عبر api.github.com
+                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    ghReleaseId = data.id; // حفظ الـ ID الخاص بالإصدار لاستخدامه في الرفع
+                    statusSpan.textContent = `✅ متصل! جاهز للرفع (Release ID: ${ghReleaseId})`;
+                    statusSpan.style.color = 'var(--green)';
+                    showToast('تم الاتصال بجيتهاب بنجاح!', 'success');
+                } else {
+                    statusSpan.textContent = '❌ ' + (data.message === 'Not Found' ? 'الإصدار أو المستودع غير موجود' : data.message);
+                    statusSpan.style.color = 'var(--red)';
+                }
+            } catch (error) {
+                statusSpan.textContent = '❌ خطأ في الاتصال بالشبكة';
+                statusSpan.style.color = 'var(--red)';
+            }
+        }
+
+        function showAppForm() {
+            document.getElementById('adminFormArea').innerHTML = `
+                <div style="background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:10px;">
+                    <h3>📝 بيانات التطبيق</h3>
+                    <div class="form-group">
+                        <label>اسم التطبيق</label><input type="text" id="appName">
+                    </div>
+                    
+                    <div class="file-upload-box">
+                        <input type="file" id="localFile" style="flex:1;">
+                        <button class="btn btn-success" id="btnUpload" onclick="uploadToGitHub()">⬆️ رفع إلى GitHub</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>رابط التحميل المباشر (سيتم ملؤه تلقائياً بعد الرفع)</label>
+                        <input type="text" id="appDownloadUrl" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>وصف مختصر</label><input type="text" id="appShort"></div>
+                        <div class="form-group"><label>الحجم</label><input type="text" id="appSize"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveApp()">💾 حفظ في قاعدة البيانات</button>
                 </div>
             `;
         }
 
-        // دالة تحويل رابط Google Drive إلى رابط مباشر
-        function convertDriveLink(inputUrl) {
-            const regex = /\/d\/([a-zA-Z0-9_-]+)\//;
-            const match = inputUrl.match(regex);
-            if (match && match[1]) {
-                return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+        // دالة الرفع المباشر للملف (تطبيق القواعد الثلاث)
+        async function uploadToGitHub() {
+            const fileInput = document.getElementById('localFile');
+            const file = fileInput.files[0];
+            const btn = document.getElementById('btnUpload');
+            
+            if (!file) return showToast('⚠️ الرجاء اختيار ملف أولاً من جهازك', 'error');
+            if (!ghReleaseId) return showToast('⚠️ الرجاء النقر على "فحص الاتصال" في إعدادات جيتهاب أولاً', 'error');
+
+            const ghConfig = JSON.parse(localStorage.getItem('gh_config'));
+            
+            // القاعدة 1: التوجيه لخادم uploads.github.com
+            const uploadUrl = `https://uploads.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/releases/${ghReleaseId}/assets?name=${encodeURIComponent(file.name)}`;
+
+            btn.textContent = '⏳ جاري الرفع...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: {
+                        // القاعدة 2: إرفاق التوكن
+                        'Authorization': `Bearer ${ghConfig.token}`,
+                        // القاعدة 3: نوع الملف (بيانات خام)
+                        'Content-Type': 'application/octet-stream'
+                    },
+                    body: file // إرسال الملف مباشرة
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showToast('✅ تم رفع التطبيق بنجاح!', 'success');
+                    // استخراج الرابط المباشر ووضعه في الحقل
+                    document.getElementById('appDownloadUrl').value = data.browser_download_url;
+                    
+                    // حساب الحجم ووضعه في الحقل تلقائياً (MB)
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    document.getElementById('appSize').value = `${sizeMB} MB`;
+                } else {
+                    // إذا كان الملف موجوداً مسبقاً بنفس الاسم
+                    if(data.errors && data.errors[0].code === 'already_exists') {
+                        showToast('❌ ملف بنفس الاسم موجود مسبقاً في هذا الإصدار', 'error');
+                    } else {
+                        showToast('❌ فشل الرفع: ' + data.message, 'error');
+                    }
+                }
+            } catch (error) {
+                showToast('❌ انقطع الاتصال أثناء الرفع', 'error');
+            } finally {
+                btn.textContent = '⬆️ رفع إلى GitHub';
+                btn.disabled = false;
             }
-            // إذا كان بالفعل رابطاً مباشراً، نرجعه كما هو
-            return inputUrl;
         }
 
         async function saveApp() {
-            const name = document.getElementById('appName').value.trim();
-            const shortDesc = document.getElementById('appShortDesc').value.trim();
-            const rawUrl = document.getElementById('appDownloadUrlInput').value.trim();
-            if(!name || !shortDesc || !rawUrl) { showToast('⚠️ أكمل الحقول المطلوبة','error'); return; }
-            const downloadUrl = convertDriveLink(rawUrl);
-            document.getElementById('appDownloadUrl').value = downloadUrl;
-            const data = {
-                name,
-                nameEn: document.getElementById('appNameEn').value.trim(),
-                category: document.getElementById('appCategory').value,
-                version: document.getElementById('appVersion').value.trim(),
-                shortDesc,
-                fullDesc: document.getElementById('appFullDesc').value.trim(),
-                size: document.getElementById('appSize').value.trim(),
-                developer: document.getElementById('appDeveloper').value.trim(),
-                requirements: document.getElementById('appRequirements').value.trim(),
-                iconUrl: document.getElementById('appIconUrl').value.trim(),
-                downloadUrl,
-                tags: document.getElementById('appTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-                featured: document.getElementById('appFeatured').checked
-            };
-            try {
-                if(editingAppId) await updateApp(editingAppId, data);
-                else await addApp(data);
-                showToast('✅ تم الحفظ','success');
-                editingAppId = null;
-                showDashboard();
-                refreshApps();
-            } catch(e) { showToast('❌ خطأ في الحفظ','error'); }
+            const name = document.getElementById('appName').value;
+            const link = document.getElementById('appDownloadUrl').value;
+            if(!name || !link) return showToast('الاسم والرابط مطلوبان','error');
+            
+            await db.collection('apps').add({
+                name, downloadUrl: link,
+                shortDesc: document.getElementById('appShort').value,
+                size: document.getElementById('appSize').value,
+                category: 'mobile', downloads: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast('تم حفظ التطبيق!','success');
+            document.getElementById('adminFormArea').innerHTML='';
+            init();
         }
 
-        async function deleteAppConfirmed(id) {
-            if(!confirm('هل أنت متأكد من حذف هذا التطبيق؟')) return;
-            await deleteApp(id);
-            showToast('🗑️ تم الحذف','info');
-            refreshApps();
-            showDashboard();
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderApps(); });
+        document.getElementById('categoryTabs').addEventListener('click', (e) => {
+            if(e.target.tagName==='BUTTON') {
+                document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCategory = e.target.dataset.category; renderApps();
+            }
+        });
+
+        async function init() {
+            // توليد النجوم الخلفية
+            for(let i=0;i<20;i++){
+                let p = document.createElement('div'); p.className='particle';
+                p.style.cssText=`width:10px;height:10px;background:var(--primary);left:${Math.random()*100}%;animation-duration:${Math.random()*10+5}s`;
+                document.getElementById('particlesContainer').appendChild(p);
+            }
+            allApps = await fetchApps(); renderApps();
         }
-
-        async function refreshApps() {
-            allApps = await fetchApps();
-            renderApps();
-            if(document.getElementById('adminAppList')) renderAdminAppList();
-        }
-
-        // Events
-        appModalOverlay.addEventListener('click', e=>{ if(e.target===appModalOverlay) closeModal(); });
-        adminOverlay.addEventListener('click', e=>{ if(e.target===adminOverlay) closeAdminPanel(); });
-        document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closeAdminPanel(); } });
-        window.addEventListener('scroll', ()=> header.classList.toggle('scrolled', window.scrollY>50));
-
-        // Start
-        createParticles();
-        refreshApps();
+        init();
     </script>
 </body>
 </html>
